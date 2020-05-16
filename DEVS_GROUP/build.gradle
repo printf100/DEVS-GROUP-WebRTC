@@ -1,0 +1,59 @@
+plugins {
+	id 'org.springframework.boot' version '2.3.0.RELEASE'
+	id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+	id 'java'
+	id 'war'
+}
+
+group = 'com.devs'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+repositories {
+	mavenCentral()
+	
+	// ojdbc
+	maven { url "https://code.lds.org/nexus/content/groups/main-repo"}
+
+	//lombok
+	maven { url "https://plugins.gradle.org/m2/" }
+
+	//maven { url "http://www.datanucleus.org/downloads/maven2/"}
+}
+
+dependencies {
+	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation 'org.springframework.boot:spring-boot-starter-data-mongodb'
+	implementation 'org.springframework.boot:spring-boot-starter-web'
+	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+	
+	// jasper
+	compile group: 'org.apache.tomcat.embed', name: 'tomcat-embed-jasper', version: '9.0.31'
+	compile group: 'javax.servlet', name: 'jstl', version: '1.2'
+	
+	compile group: 'org.apache.httpcomponents', name: 'httpclient', version: '4.5.12'
+	
+	// ojdbc6
+	compile 'com.oracle:ojdbc6:11.2.0.3'
+	runtime 'com.oracle:ojdbc6:11.2.0.3'
+
+	compileOnly 'org.projectlombok:lombok:1.18.6'
+	annotationProcessor 'org.projectlombok:lombok'
+
+	developmentOnly 'org.springframework.boot:spring-boot-devtools'
+	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+	testImplementation('org.springframework.boot:spring-boot-starter-test') {
+		exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
+	}
+	testImplementation 'org.springframework.security:spring-security-test'
+}
+
+test {
+	useJUnitPlatform()
+}

@@ -1,0 +1,55 @@
+server:
+  port: 8787
+  servlet:
+    context-path: /
+  
+ssoServerPort: 8585
+
+#ssoDomain: 3.136.253.121
+ssoDomain: 140.238.2.166
+#ssoDomain: localhost
+
+#clientDomain: 3.136.253.121
+clientDomain: localhost
+
+systemName: DEVS_MAIN
+
+clientSocketProtocol: ws
+clientProtocol: http
+
+  
+spring:  
+  batch:
+    job:
+      enabled: false
+  datasource:
+    platform: oracle
+    url: jdbc:oracle:thin:@qclass.iptime.org:1521:xe
+    driver-class-name: oracle.jdbc.OracleDriver
+    username: bigfinal03
+    password: bigfinal03
+    
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
+      
+
+## jpa
+  jpa:
+    database: oracle
+    show-sql: true
+    hibernate:
+      ddl-auto: create
+
+## devtools  
+  devtools:
+    livereload:
+      enabled: true
+
+    
+logging.level:
+  root: warn
+  org.springframework:
+    boot: info
+  com.devs.group: debug
