@@ -27,7 +27,7 @@ public class SsoController {
 
 	@Autowired
 	private OAuthService oauthService;
-	
+
 	@Value("${server.port}")
 	private int SERVER_PORT;
 
@@ -48,7 +48,8 @@ public class SsoController {
 	}
 
 	private String getOAuthRedirectUri() {
-		return String.format("http://" + CLIENT_DOMAIN + ":%d/ssoclient/oauthCallback", SERVER_PORT);
+		
+		return "https://" + CLIENT_DOMAIN + "/ssoclient/oauthCallback";
 	}
 
 	@RequestMapping(value = "/oauthCallback", method = RequestMethod.GET)
@@ -119,6 +120,7 @@ public class SsoController {
 
 		log.debug("\n## logout secceeded {}", userName);
 		System.out.println("\n## logout secceeded " + userName);
+
 		return response;
 	}
 

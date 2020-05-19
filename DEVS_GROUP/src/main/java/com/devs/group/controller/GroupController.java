@@ -46,12 +46,17 @@ public class GroupController {
 		System.out.println("\n## user in session : " + member);
 
 		if (member.getTokenId() == null) {
+
 			session.removeAttribute("user");
-			return new ModelAndView("redirect:/");
+			return new ModelAndView("redirect:/group/");
+
 		} else {
+
 			map.put("user", member);
-			// 프로필 session 주입
+
+			// 프로필 정보 session에 셋팅
 			session.setAttribute("profile", memberService.getMemberProfile(member.getMembercode()));
+
 			// properties를 session에 셋팅하여 jsp 페이지에서 사용한다.
 			session.setAttribute("SERVER_PORT", SERVER_PORT);
 			session.setAttribute("CLIENT_DOMAIN", CLIENT_DOMAIN);
@@ -61,4 +66,13 @@ public class GroupController {
 
 		return new ModelAndView("group");
 	}
+
+	@GetMapping("webrtc")
+	public ModelAndView webRtcMainPage() {
+
+		logger.info("WEBRTC PAGE");
+
+		return new ModelAndView("webrtc");
+	}
+
 }

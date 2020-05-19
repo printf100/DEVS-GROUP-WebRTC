@@ -9,5 +9,6 @@ public interface MemberService {
 
 	boolean updateTokenId(String userName, String token);
 
+	// 로그인 한 멤버 프로필 가져오기
 	MemberProfile getMemberProfile(int membercode);
 }

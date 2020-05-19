@@ -25,7 +25,7 @@
 
 <!-- START :: css -->
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-	<link href="/resources/css/master.css" rel="stylesheet" type="text/css">
+<!-- 	<link href="/resources/css/master.css" rel="stylesheet" type="text/css"> -->
 	
 	<style type="text/css">
 	
@@ -49,7 +49,10 @@
 	<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 	<script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	<script type="text/javascript">
-	
+		var SERVER_PORT = "${SERVER_PORT}";
+		var CLIENT_DOMAIN = "${CLIENT_DOMAIN}";
+		var CLIENT_SOCKET_PROTOCOL = "${CLIENT_SOCKET_PROTOCOL}";
+		var CLIENT_PROTOCOL = "${CLIENT_PROTOCOL}";
 	</script>
 <!-- END :: JAVASCRIPT -->
 

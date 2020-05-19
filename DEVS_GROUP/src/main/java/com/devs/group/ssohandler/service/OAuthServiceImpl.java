@@ -70,22 +70,25 @@ public class OAuthServiceImpl implements OAuthService {
 
 	@Override
 	public TokenRequestResult requestAccessTokenToAuthServer(String code, HttpServletRequest request) {
-		log.debug("\n## requestAccessTokenToAuthServer()");
+		log.info("\n## requestAccessTokenToAuthServer()");
 
 		TokenRequestResult tokenRequestResult = requestAccessTokenToAuthServer(code);
-		log.debug("\n## tokenResult : '{}'\n", tokenRequestResult);
+		log.info("\n## tokenResult : '{}'\n", tokenRequestResult);
 
 		if (tokenRequestResult.getError() != null) {
 			return tokenRequestResult;
 		}
 
 		UserInfoResponse userInfoResponse = requestUserInfoToAuthServer(tokenRequestResult.getAccessToken());
+
 		if (userInfoResponse.getResult() == false) {
 			tokenRequestResult.setError(userInfoResponse.getMessage());
 			return tokenRequestResult;
 		}
+
 		Member member = userService.getUser(userInfoResponse.getUserName());
 		request.getSession().setAttribute("user", member);
+
 		String userName = userInfoResponse.getUserName();
 
 		userService.updateTokenId(userName, extractTokenId(tokenRequestResult.getAccessToken()));
@@ -95,31 +98,35 @@ public class OAuthServiceImpl implements OAuthService {
 
 	@Override
 	public Response logout(String tokenId, String userName) {
-		log.debug("\n## logout()");
+		log.info("\n## logout()");
 		System.out.println("\n## logout()");
 
 		Response response = new Response();
 
-		log.debug("\n## logout {}", userName);
+		log.info("\n## logout {}", userName);
 		System.out.println("\n## logout " + userName);
+
 		Member member = userService.getUser(userName);
+
 		if (member == null || member.getTokenId() == null) {
 			return response;
 		}
 
 		String savedTokenId = member.getTokenId();
-		log.debug("\n## in logout savedTokenId, tokenId : '{}', '{}'", savedTokenId, tokenId);
+		log.info("\n## in logout savedTokenId, tokenId : '{}', '{}'", savedTokenId, tokenId);
 		System.out.println("\n## in logout savedTokenId, tokenId : " + savedTokenId + ", " + tokenId);
+
 		if (tokenId.equals(savedTokenId) == false) {
 			return response;
 		}
+
 		userService.updateTokenId(userName, null);
 
 		return response;
 	}
 
 	private TokenRequestResult requestAccessTokenToAuthServer(String code) {
-		log.debug("\n## requestAccessTokenToAuthServer() : code {}", code);
+		log.info("\n## requestAccessTokenToAuthServer() : code {}", code);
 
 		String reqUrl = "http://" + SSO_DOMAIN + ":" + SSO_SERVER_PORT + "/oauth/token";
 
@@ -138,17 +145,15 @@ public class OAuthServiceImpl implements OAuthService {
 	}
 
 	private String getOAuthRedirectUri() {
-		//
-		return String.format("http://" + CLIENT_DOMAIN + ":%d/ssoclient/oauthCallback", SERVER_PORT);
+
+		return "https://" + CLIENT_DOMAIN + "/ssoclient/oauthCallback";
 	}
 
 	private UserInfoResponse requestUserInfoToAuthServer(String token) {
-		log.debug("\n## requestUserInfoToAuthServer()");
+		log.info("\n## requestUserInfoToAuthServer()");
 
-		//
 		String reqUrl = "http://" + SSO_DOMAIN + ":" + SSO_SERVER_PORT + "/userInfo";
 		String authorizationHeader = getAuthorizationRequestHeader();
-//		String authorizationHeader = null;
 
 		Map<String, String> paramMap = new HashMap<>();
 		paramMap.put("token", token);
@@ -162,27 +167,30 @@ public class OAuthServiceImpl implements OAuthService {
 	}
 
 	private <T> T executePostAndParseResult(HttpPost post, Class<T> clazz) {
-		log.debug("\n## executePostAndParseResult() : httpPost {}", post);
+		log.info("\n## executePostAndParseResult() : httpPost {}", post);
 
 		T result = null;
 		try {
 			HttpClient client = HttpClientBuilder.create().build();
 
 			HttpResponse response = client.execute(post);
-			log.debug("\n## executePostAndParseResult() : response {}", response);
+			log.info("\n## executePostAndParseResult() : response {}", response);
 
 			BufferedReader rd = new BufferedReader(new InputStreamReader(response.getEntity().getContent()));
-			log.debug("\n## executePostAndParseResult() : read response {}", rd);
+			log.info("\n## executePostAndParseResult() : read response {}", rd);
 
 			StringBuffer resultBuffer = new StringBuffer();
 			String line = "";
+
 			while ((line = rd.readLine()) != null) {
 				resultBuffer.append(line);
 			}
-			log.debug("\n## response body : '{}'", resultBuffer.toString());
+
+			log.info("\n## response body : '{}'", resultBuffer.toString());
 
 			ObjectMapper mapper = new ObjectMapper();
 			result = mapper.readValue(resultBuffer.toString(), clazz);
+
 		} catch (IOException e) {
 			log.error(e.getMessage(), e);
 		}
@@ -191,15 +199,16 @@ public class OAuthServiceImpl implements OAuthService {
 	}
 
 	private HttpPost buildHttpPost(String reqUrl, Map<String, String> paramMap, String authorizationHeader) {
-		log.debug("\n## in buildHttpPost() reqUrl : {}", reqUrl);
+		log.info("\n## in buildHttpPost() reqUrl : {}", reqUrl);
 
 		HttpPost post = new HttpPost(reqUrl);
+
 		if (authorizationHeader != null) {
-			//
 			post.addHeader("Authorization", authorizationHeader);
 		}
 
 		List<NameValuePair> urlParameters = new ArrayList<>();
+
 		for (Map.Entry<String, String> entry : paramMap.entrySet()) {
 			urlParameters.add(new BasicNameValuePair(entry.getKey(), entry.getValue()));
 		}
@@ -209,7 +218,9 @@ public class OAuthServiceImpl implements OAuthService {
 		} catch (UnsupportedEncodingException e) {
 			log.error(e.getMessage(), e);
 		}
-		log.debug("\n## final buildHttpPost() reqUrl : {}", post);
+
+		log.info("\n## final buildHttpPost() reqUrl : {}", post);
+
 		return post;
 	}
 

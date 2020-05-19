@@ -26,6 +26,7 @@
 <body>
 
 	<h1>${profile.membercode }</h1>
+	<a href="webrtc">WEBRTC</a>
 
 </body>
 </html>

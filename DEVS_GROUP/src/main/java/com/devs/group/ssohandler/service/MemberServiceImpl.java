@@ -13,7 +13,7 @@ public class MemberServiceImpl implements MemberService {
 
 	@Autowired
 	private UserRepository memberRepository;
-	
+
 	@Autowired
 	private MemberProfileRepository memberProfileRepository;
 
@@ -31,11 +31,12 @@ public class MemberServiceImpl implements MemberService {
 		return true;
 	}
 
+	// 로그인 한 멤버 프로필 가져오기
 	@Override
 	public MemberProfile getMemberProfile(int membercode) {
-		
+
 		MemberProfile memberProfile = memberProfileRepository.findByMembercode(membercode);
-		
+
 		return memberProfile;
 	}
 }

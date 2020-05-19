@@ -3,7 +3,7 @@ package com.devs.group.ssohandler.domain.vo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class TokenRequestResult {
-	//
+
 	@JsonProperty("access_token")
 	private String accessToken;
 
@@ -22,17 +22,19 @@ public class TokenRequestResult {
 
 	@Override
 	public String toString() {
-		//
+		
 		StringBuilder builder = new StringBuilder();
 		builder.append("TokenRequestResult [");
+		
 		if (error != null) {
-			//
+			
 			builder.append("error=");
 			builder.append(error);
 			builder.append(", errorDescription=");
 			builder.append(errorDescription);
+			
 		} else {
-			//
+			
 			builder.append("accessToken=");
 			builder.append(accessToken);
 			builder.append(", tokenType=");
@@ -44,7 +46,9 @@ public class TokenRequestResult {
 			builder.append(", refreshToken=");
 			builder.append(refreshToken);
 		}
+		
 		builder.append("]");
+		
 		return builder.toString();
 	}
 

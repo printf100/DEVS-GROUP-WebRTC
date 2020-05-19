@@ -1,11 +1,9 @@
 package com.devs.group.ssohandler.domain.vo;
 
 public class UserInfoResponse {
-	//
+
 	private boolean result = true;
-
 	private String message;
-
 	private String userName;
 
 	public boolean getResult() {
