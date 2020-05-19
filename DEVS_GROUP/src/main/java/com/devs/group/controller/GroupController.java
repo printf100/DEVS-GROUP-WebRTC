@@ -48,7 +48,7 @@ public class GroupController {
 		if (member.getTokenId() == null) {
 
 			session.removeAttribute("user");
-			return new ModelAndView("redirect:/group/");
+			return new ModelAndView("redirect:/");
 
 		} else {
 
