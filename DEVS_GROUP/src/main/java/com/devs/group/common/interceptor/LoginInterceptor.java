@@ -19,9 +19,6 @@ public class LoginInterceptor implements HandlerInterceptor {
 
 	private Logger logger = LoggerFactory.getLogger(LoginInterceptor.class);
 
-	@Autowired
-	private UserRepository userRepository;
-
 	// controller로 보내기 전에 처리하는 인터셉터
 	// 반환이 false라면 controller로 요청을 안함
 	// 매개변수 Object는 핸들러 정보를 의미한다. ( RequestMapping , DefaultServletHandler )
@@ -29,40 +26,32 @@ public class LoginInterceptor implements HandlerInterceptor {
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
 		System.out.println(
-				"==================================================================================== preHandle ==========================================");
+				"=========================================================== preHandle =========================================================");
 		HttpSession session = request.getSession();
 
-		if (session.getAttribute("user") != null) {
-
-			Member member = userRepository.findByMemberid(((Member) session.getAttribute("user")).getMemberid());
-
-			if (member.getTokenId() != null //
-					|| request.getRequestURI().contains("/ssoclient/sso")//
-					|| request.getRequestURI().contains("/ssoclient/oauthCallback")//
-					|| request.getRequestURI().contains("/ssoclient/logout")//
-					|| request.getRequestURI().contains("/.well-known/")//
-//				|| request.getRequestURI().contains("/member/login") //
-//				|| request.getRequestURI().contains("/member/ajaxemailcheck") //
-//				|| request.getRequestURI().contains("/member/ajaxidcheck") //
-//				|| request.getRequestURI().contains("/member/join") //
-//				|| request.getRequestURI().contains("/member/oauth") //
-					//
-					//
-					|| request.getRequestURI().contains("/resources/") //
-					|| request.getRequestURI().contains("/views/") //
-			) {
-				return true;
-				
-			} else {	// session은 있지만 token id가 null일 경우
-				response.sendRedirect("/ssoclient/sso");
-				return false;
-			}
-
-		} else {	// session이 null일 경우
-			response.sendRedirect("/ssoclient/sso");
-			return false;
+		if (session.getAttribute("user") != null //
+				|| request.getRequestURI().contains("/ssoclient/sso")//
+				|| request.getRequestURI().contains("/ssoclient/oauthCallback")//
+				|| request.getRequestURI().contains("/ssoclient/logout")//
+				|| request.getRequestURI().contains("/.well-known/acme-challenge/")// ssl (certbot) test 용
+				//
+//		            || request.getRequestURI().contains("/member/login") //
+//		            || request.getRequestURI().contains("/member/ajaxemailcheck") //
+//		            || request.getRequestURI().contains("/member/ajaxidcheck") //
+//		            || request.getRequestURI().contains("/member/join") //
+//		            || request.getRequestURI().contains("/member/oauth") //
+				//
+				|| request.getRequestURI().contains("/resources/") //
+				|| request.getRequestURI().contains("/views/") //
+		) {
+			return true;
 		}
 
+		if (session.getAttribute("user") == null) {
+			response.sendRedirect("/ssoclient/sso");
+		}
+
+		return false;
 	}
 
 	// controller의 handler가 끝나면 처리됨
@@ -70,7 +59,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 	public void postHandle(HttpServletRequest request, HttpServletResponse response, Object handler,
 			ModelAndView modelAndView) throws Exception {
 		System.out.println(
-				"==================================================================================== postHandle ==========================================");
+				"============================================================= postHandle =======================================================");
 		// logger.info("[INTERCEPTOR] : postHandle");
 	}
 
@@ -79,7 +68,7 @@ public class LoginInterceptor implements HandlerInterceptor {
 	public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex)
 			throws Exception {
 		System.out.println(
-				"==================================================================================== afterCompletion ==========================================");
+				"=========================================================== afterCompletion ======================================================");
 		// logger.info("[INTERCEPTOR] : afterCompletion");
 	}
 

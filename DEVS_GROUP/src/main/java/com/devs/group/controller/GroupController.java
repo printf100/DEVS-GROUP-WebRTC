@@ -42,20 +42,29 @@ public class GroupController {
 
 		logger.info("GROUP PAGE");
 
-		Member member = (Member) session.getAttribute("user");
-		System.out.println("\n## user in session : " + member);
+		Member sessionMember = (Member) session.getAttribute("user");
+		System.out.println("\n## user in session : " + sessionMember);
 
-		if (member.getTokenId() == null) {
+		if (sessionMember == null) {
+			System.out.println("------------session이 null이잖아요~~~~?");
+			return new ModelAndView("redirect:/");
+		}
+		
+		Member dbMember = memberService.getUser(sessionMember.getMemberid());
 
+		if (dbMember.getTokenId() == null) {
+
+			System.out.println("------------session은 null이 아닌데 token id가 null이라서 세션에셔 user 까잖아요~~~?");
 			session.removeAttribute("user");
 			return new ModelAndView("redirect:/");
 
 		} else {
 
-			map.put("user", member);
+			System.out.println("------------세션도 있고 token도 null이 아니에요~~~~~~");
+			map.put("user", dbMember);
 
 			// 프로필 정보 session에 셋팅
-			session.setAttribute("profile", memberService.getMemberProfile(member.getMembercode()));
+			session.setAttribute("profile", memberService.getMemberProfile(dbMember.getMembercode()));
 
 			// properties를 session에 셋팅하여 jsp 페이지에서 사용한다.
 			session.setAttribute("SERVER_PORT", SERVER_PORT);

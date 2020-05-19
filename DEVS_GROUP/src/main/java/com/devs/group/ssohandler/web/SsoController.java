@@ -48,7 +48,7 @@ public class SsoController {
 	}
 
 	private String getOAuthRedirectUri() {
-		
+
 		return "https://" + CLIENT_DOMAIN + "/ssoclient/oauthCallback";
 	}
 
@@ -108,6 +108,8 @@ public class SsoController {
 
 	@RequestMapping(value = "/logout", method = RequestMethod.GET)
 	public String logout() {
+
+		System.out.println("client가 나가겠대요~~~~ 제발 좀 나가라");
 		return "redirect:http://" + SSO_DOMAIN + ":" + SSO_SERVER_PORT + "/userLogout?clientId=" + getOAuthClientId();
 	}
 
@@ -115,6 +117,8 @@ public class SsoController {
 	@ResponseBody
 	public Response logoutFromAuthServer(@RequestParam(name = "tokenId") String tokenId,
 			@RequestParam(name = "userName") String userName) {
+
+		System.out.println("야호 server가 나가래요~~~~ 지금 나가잖아요~~~~?");
 
 		Response response = oauthService.logout(tokenId, userName);
 
