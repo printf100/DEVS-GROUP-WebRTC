@@ -49,6 +49,12 @@ input {
     width: 100%;
 }
 
+video {
+    transform: rotateY(180deg);
+    -webkit-transform:rotateY(180deg); /* Safari and Chrome */
+    -moz-transform:rotateY(180deg); /* Firefox */
+}
+
 </style>
 <!-- END :: CSS -->
 
@@ -61,24 +67,38 @@ input {
 <body>
 
 	<div class="container">
-		<h1>A Demo for messaging in WebRTC</h1>
+		<h1>WebRTC</h1>
+	
+		<div>
+		   <video id="remoteView" width="640" height="480" autoplay style="display: inline;"></video>
+		</div>
+		
+		<div>
+		  <video id="selfView" width="320" height="240" autoplay style="display: inline;"></video>
+		</div>
 
-		<h3>
-		 Run two instances of this webpage along with the server to test this
-		 application.<br> Create an offer, and then send the message. <br>Check
-		 the browser console to see the output.
-		</h3>
-		
-		<!--WebRTC related code-->
-		<button type="button" class="btn btn-primary" onclick='createOffer()'>CreateOffer</button>
-		<input id="messageInput" type="text" class="form-control" placeholder="message">
-		<button type="button" class="btn btn-primary" onclick='sendMessage()'>SEND</button>
-		<script src="/resources/js/socket.js"></script>
-		<!--WebRTC related code-->
-		
+		<button onclick="startRTC();">startRTC</button>
+		<input id="RTC_Manager" type="text"><button onclick="getOffer();">offer</button>
+	
 	</div>
-	<div class="footer">This application is intentionally made simple
-	 to avoid cluttering with non WebRTC related code.</div>
+	
+	<script src='/resources/js/adapter.js'></script>
+	<script src='/resources/js/main.js'></script>
+	
+	<script type="text/javascript">
+	
+		$(function(){
+		    console.log("${loginMember.memberid}")
+		    connect("${loginMember.memberid}");
+		 });
+		 
+		 function getOffer(){
+		    var rtc_manager = $("#RTC_Manager").val();
+		    
+		    offer(rtc_manager);
+		 }
+	
+	</script>
 
 </body>
 </html>

@@ -49,11 +49,11 @@ public class OAuthServiceImpl implements OAuthService {
 	@Value("${ssoDomain}")
 	private String SSO_DOMAIN;
 
-	@Value("${clientDomain}")
-	private String CLIENT_DOMAIN;
-
 	@Value("${ssoServerPort}")
 	private String SSO_SERVER_PORT;
+
+	@Value("${clientDomain}")
+	private String CLIENT_DOMAIN;
 
 	@Value("${systemName}")
 	private String SYSTEM_NAME;
@@ -66,6 +66,15 @@ public class OAuthServiceImpl implements OAuthService {
 
 	private String getOAuthClientSecret() {
 		return SYSTEM_NAME + "_secret";
+	}
+
+	private String getOAuthRedirectUri() {
+
+		// 로컬 테스트용
+//		return "http://" + CLIENT_DOMAIN + ":" + SERVER_PORT + "/ssoclient/oauthCallback";
+
+		// 서버 배포용
+		return "https://" + CLIENT_DOMAIN + "/ssoclient/oauthCallback";
 	}
 
 	@Override
@@ -142,11 +151,6 @@ public class OAuthServiceImpl implements OAuthService {
 		TokenRequestResult result = executePostAndParseResult(post, TokenRequestResult.class);
 
 		return result;
-	}
-
-	private String getOAuthRedirectUri() {
-
-		return "https://" + CLIENT_DOMAIN + "/ssoclient/oauthCallback";
 	}
 
 	private UserInfoResponse requestUserInfoToAuthServer(String token) {

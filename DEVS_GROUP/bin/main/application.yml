@@ -12,19 +12,19 @@ server:
     key-alias: tomcat
     
     
-    
+ssoDomain: www.devssso.ml
 ssoServerPort: 80
 
-ssoDomain: www.devssso.ml
-
-
+# 서버 배포용    
 clientDomain: www.devsgroup.ml
-#clientDomain: localhost
-
 systemName: DEVS_GROUP
 
-clientSocketProtocol: ws
-clientProtocol: http
+# 로컬 테스트용
+#clientDomain: localhost
+#systemName: GROUP_TEMP
+
+clientSocketProtocol: wss
+clientProtocol: https
 
 
   

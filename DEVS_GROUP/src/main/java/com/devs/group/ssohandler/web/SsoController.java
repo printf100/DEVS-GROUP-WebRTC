@@ -34,11 +34,11 @@ public class SsoController {
 	@Value("${ssoDomain}")
 	private String SSO_DOMAIN;
 
-	@Value("${clientDomain}")
-	private String CLIENT_DOMAIN;
-
 	@Value("${ssoServerPort}")
 	private String SSO_SERVER_PORT;
+
+	@Value("${clientDomain}")
+	private String CLIENT_DOMAIN;
 
 	@Value("${systemName}")
 	private String SYSTEM_NAME;
@@ -49,7 +49,11 @@ public class SsoController {
 
 	private String getOAuthRedirectUri() {
 
-		return "https://" + CLIENT_DOMAIN + "/ssoclient/oauthCallback";
+		// 로컬 테스트용
+//		return "http://" + CLIENT_DOMAIN + ":" + SERVER_PORT + "/ssoclient/oauthCallback";
+		
+		// 서버 배포용
+	    return "https://" + CLIENT_DOMAIN + "/ssoclient/oauthCallback";
 	}
 
 	@RequestMapping(value = "/oauthCallback", method = RequestMethod.GET)
