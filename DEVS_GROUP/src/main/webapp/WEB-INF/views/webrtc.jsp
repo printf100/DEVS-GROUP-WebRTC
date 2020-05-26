@@ -1,6 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
-	
+   
 <%@page isELIgnored="false" %>
 
 <!DOCTYPE html>
@@ -66,39 +66,48 @@ video {
 </head>
 <body>
 
-	<div class="container">
-		<h1>WebRTC</h1>
-	
-		<div>
-		   <video id="remoteView" width="640" height="480" autoplay style="display: inline;"></video>
-		</div>
-		
-		<div>
-		  <video id="selfView" width="320" height="240" autoplay style="display: inline;"></video>
-		</div>
+   <div class="container">
+      <h1>WebRTC</h1>
+   
+      <div>
+        <video id="myView" width="320" height="240" autoplay style="display: inline;"></video>
+      </div>
 
-		<button onclick="startRTC();">startRTC</button>
-		<input id="RTC_Manager" type="text"><button onclick="getOffer();">offer</button>
-	
-	</div>
-	
-	<script src='/resources/js/adapter.js'></script>
-	<script src='/resources/js/main.js'></script>
-	
-	<script type="text/javascript">
-	
+      <div id="remoteViews">
+         <video id="remoteView" width="320" height="240" autoplay="autoplay" style="display: inline;"></video>
+      </div>
+
+      <button onclick="startRTC();">화상채팅 시작하기</button>
+      <input id="participant" type="text"><button onclick="getOffer();">초대하기</button>
+   
+   </div>
+   
+   <script type="text/javascript">
+   
 		$(function(){
-		    console.log("${loginMember.memberid}")
-		    connect("${loginMember.memberid}");
-		 });
-		 
-		 function getOffer(){
-		    var rtc_manager = $("#RTC_Manager").val();
-		    
-		    offer(rtc_manager);
-		 }
-	
-	</script>
+		});
+		
+		function getOffer(){
+			var participant = $("#participant").val();
+			
+			offer(participant);
+		}
+		
+		function addNewPeer(stream) {
+			var newVideo = $("video").attr({
+				"id" : "temp",
+				"width" : "320",
+				"height" : "240",
+				"autoplay" : "autoplay",
+				"style" : "display: inline;"
+			})
+			
+			$("#remoteViews").append(newVideo);
+			
+			temp.srcObject = stream;
+		}
+   
+   </script>
 
 </body>
 </html>

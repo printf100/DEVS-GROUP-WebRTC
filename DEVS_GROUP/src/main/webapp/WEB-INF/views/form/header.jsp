@@ -43,16 +43,32 @@
 	<c:set var="CLIENT_DOMAIN" value="${sessionScope.CLIENT_DOMAIN}"></c:set>
 	<c:set var="CLIENT_SOCKET_PROTOCOL" value="${sessionScope.CLIENT_SOCKET_PROTOCOL}"></c:set>
 	<c:set var="CLIENT_PROTOCOL" value="${sessionScope.CLIENT_PROTOCOL}"></c:set>
+	
+	<c:set var="channel" value="${sessionScope.channel}"></c:set> <!-- 현재 채널 (채널주인 || 팔로우한사람만 접근가능)-->
+	<c:set var="follow" value="${sessionScope.follow}"></c:set> <!-- 현재 채널의 follow 상태(null || '' 이라면 방장) -->
 <!-- END :: set JSTL variable -->
 
 <!-- START :: JAVASCRIPT -->
 	<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 	<script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
+	   
+	<script src='/resources/js/adapter.js'></script>
+	<script src='/resources/js/main.js'></script>
+	<script src='/resources/js/chat_socket.js'></script>
+	
 	<script type="text/javascript">
 		var SERVER_PORT = "${SERVER_PORT}";
 		var CLIENT_DOMAIN = "${CLIENT_DOMAIN}";
 		var CLIENT_SOCKET_PROTOCOL = "${CLIENT_SOCKET_PROTOCOL}";
 		var CLIENT_PROTOCOL = "${CLIENT_PROTOCOL}";
+
+		// rtc 소켓 연결
+		// var sock;
+		// connect("${loginMember.memberid}");
+		
+		// chatting 소켓 연결
+		var ws;
+		connectChatSocket();
 	</script>
 <!-- END :: JAVASCRIPT -->
 
@@ -81,40 +97,6 @@
 				
 				<!-- nav list -->						
 				<ul class="navbar-nav list-group-horizontal ml-5">
-
-					<li class="nav-item">
-						<h4 class="mx-2"><a class="nav-link" href="/feed/"><i class="fas fa-home"></i></a></h4>
-					</li>
-					<li class="nav-item">
-						<h4 class="mx-2"><a class="nav-link" href="/dm/"><i class="far fa-paper-plane"></i></a></h4>
-					</li>
-					<li class="nav-item">
-						<h4 class="mx-2"><a class="nav-link" href="#"><i class="far fa-compass"></i></a></h4>
-					</li>
-					<li class="nav-item">
-						<h4 class="mx-2"><a class="nav-link" href="#"><i class="far fa-heart"></i></a></h4>
-					</li>
-					<li class="nav-item">
-						<h4 class="mx-2">
-							<a class="nav-link" href="/member/profile">
-							<c:choose>
-								<c:when test="${not empty loginProfile.memberImgServerName}">
-									<div class="rounded-circle border border-dark  w-26 h-26 overflow-hidden">										
-										<img 
-											id="header_profile_image" 
-											class="w-26 h-26 bg-white cursor-pointer vertical-align-baseline"
-											src="/resources/images/profileupload/${loginProfile.memberImgServerName }"
-										>
-									</div>
-								</c:when>
-								<c:otherwise>
-									<i class="far fa-user-circle"></i>
-								</c:otherwise>
-							</c:choose>
-						
-							</a>
-						</h4>
-					</li>
 					<li class="nav-item">
 						<h4 class="mx-2"><a class="nav-link" href="/ssoclient/logout"><i class="fas fa-sign-out-alt"></i></a></h4>
 					</li>

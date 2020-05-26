@@ -49,12 +49,23 @@ dependencies {
 	// webrtc adapter.js
 	compile group: 'org.webjars.bower', name: 'webrtc-adapter', version: '6.4.0'
 	
+	// mongodb
+	// compile group: 'org.mongodb', name: 'mongo-java-driver', version: '3.11.2'
+	
 	// ojdbc6
 	compile 'com.oracle:ojdbc6:11.2.0.3'
 	runtime 'com.oracle:ojdbc6:11.2.0.3'
 
+	// lombok
 	compileOnly 'org.projectlombok:lombok:1.18.6'
 	annotationProcessor 'org.projectlombok:lombok'
+
+	// file
+	compile group: 'commons-io', name: 'commons-io', version: '2.6'
+	compile group: 'commons-fileupload', name: 'commons-fileupload', version: '1.4'
+
+	// gson
+	compile group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
 
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'	// 외부 톰캣을 사용한다.

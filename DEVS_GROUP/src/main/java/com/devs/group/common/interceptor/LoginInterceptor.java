@@ -6,13 +6,9 @@ import javax.servlet.http.HttpSession;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.ModelAndView;
-
-import com.devs.group.ssohandler.domain.entity.Member;
-import com.devs.group.ssohandler.domain.repository.UserRepository;
 
 @Component
 public class LoginInterceptor implements HandlerInterceptor {
