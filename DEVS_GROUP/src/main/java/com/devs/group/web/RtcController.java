@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
@@ -57,7 +58,7 @@ public class RtcController {
 
 	// 채팅방 만들기
 	@PostMapping(value = "makeRtcRoom")
-	public Map<String, Object> makeChatRoom(HttpSession session, @RequestBody String room_name) {
+	public Map<String, Object> makeChatRoom(HttpSession session, String room_name) {
 		logger.info("rtc/makeRtcRoom.POST");
 
 		RtcVo newRtcRoom = new RtcVo();

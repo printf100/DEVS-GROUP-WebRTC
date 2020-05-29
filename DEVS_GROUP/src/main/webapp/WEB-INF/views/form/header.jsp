@@ -103,6 +103,58 @@
 			</div>
 		</nav>
 
-	</header>	
+	</header>
+	
+	<!-- START :: 채팅방 만들기 modal -->
+	<div class="modal" id="makeNewChatRoom">
+		<div class="modal-dialog">
+			<div class="modal-content">
+		
+		    <!-- Modal Header -->
+		    <div class="modal-header">
+		    	<h4 class="modal-title">채팅방 만들기</h4>
+		    	<button type="button" class="close" data-dismiss="modal">&times;</button>
+		    </div>
+		
+		    <!-- Modal body -->
+		    <div class="modal-body">
+		    	<input type="text" id="chatRoomName">
+		    </div>
+		
+		    <!-- Modal footer -->
+		    <div class="modal-footer">
+		    	<button type="button" onclick="makeChatRoom();">만들기</button>
+		    </div>
+		
+		 	</div>
+		</div>
+	</div>
+	<!-- END :: 채팅방 만들기 modal -->
+	
+	<!-- START :: 화상채팅방 만들기 modal -->
+	<div class="modal" id="makeNewRtcRoom">
+		<div class="modal-dialog">
+			<div class="modal-content">
+		
+		    <!-- Modal Header -->
+		    <div class="modal-header">
+		    	<h4 class="modal-title">화상채팅방 만들기</h4>
+		    	<button type="button" class="close" data-dismiss="modal">&times;</button>
+		    </div>
+		
+		    <!-- Modal body -->
+		    <div class="modal-body">
+		    	<input type="text" id="rtcRoomName">
+		    </div>
+		
+		    <!-- Modal footer -->
+		    <div class="modal-footer">
+		    	<button type="button" onclick="makeRtcRoom();">만들기</button>
+		    </div>
+		
+		 	</div>
+		</div>
+	</div>
+	<!-- END :: 화상채팅방 만들기 modal -->
 </body>
 </html>

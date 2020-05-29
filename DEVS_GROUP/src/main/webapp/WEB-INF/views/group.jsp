@@ -79,14 +79,14 @@
 <!-- START :: 내가만든, 내가 팔로우한 채널 리스트 가져오기 -->
 	<script type="text/javascript">
 	
-		$(function(){
-			selectMyGroupChannelList_main()
-			selectFollowGroupChannelList_main()
-		})
+		$(function() {
+			selectMyGroupChannelList_main();
+			selectFollowGroupChannelList_main();
+		});
 		
 		/////////////////////////////////////////////////////////////////////////////
 
-		function selectMyGroupChannelList_main(){
+		function selectMyGroupChannelList_main() {
 			$.ajax({
 				type: "post",
 				url: "/group/selectMyGroupChannelList",
@@ -97,16 +97,16 @@
 				dataType: "json",
 				
 				success: function(data){
-					console.log("myGroupChannel >>> ")
-					console.log(data)
+					console.log("myGroupChannel >>> ");
+					console.log(data);
 					$("#group-channel-container").empty();
-					fillMyGroupChannelList_main(data)
+					fillMyGroupChannelList_main(data);
 				},
 				
 				error: function(){
 					alert("통신실패");
 				}
-			})
+			});
 		}
 		
 		function fillMyGroupChannelList_main(data){
