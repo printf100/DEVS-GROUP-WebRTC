@@ -5,8 +5,9 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.devs.group.model.Dao.MongoChatDao;
+import com.devs.group.model.dao.MongoChatDao;
 import com.devs.group.model.vo.ChatVo;
+import com.devs.group.model.vo.RtcVo;
 
 @Service
 public class MongoChatServiceImpl implements MongoChatService {
@@ -14,6 +15,10 @@ public class MongoChatServiceImpl implements MongoChatService {
 	@Autowired
 	private MongoChatDao dao;
 
+	/*
+	 * Chatting
+	 */
+	
 	@Override
 	public ChatVo insertChatRoom(ChatVo newRoom) {
 		return dao.insertChatRoom(newRoom);
@@ -42,6 +47,30 @@ public class MongoChatServiceImpl implements MongoChatService {
 	@Override
 	public void removeUnreadMemberCodeList(int room_code, int member_code) {
 		dao.removeUnreadMemberCodeList(room_code, member_code);
+	}
+
+	/*
+	 * WebRTC
+	 */
+	
+	@Override
+	public RtcVo insertRtcRoom(RtcVo newRtcRoom) {
+		return dao.insertRtcRoom(newRtcRoom);
+	}
+
+	@Override
+	public List<RtcVo> selectRtcList(int channel_code) {
+		return dao.selectRtcList(channel_code);
+	}
+
+	@Override
+	public int deleteRtcRoom(int room_code) {
+		return dao.deleteRtcRoom(room_code);
+	}
+
+	@Override
+	public RtcVo selectOneRtcRoom(int room_code) {
+		return dao.selectOneRtcRoom(room_code);
 	}
 
 }

@@ -36,9 +36,45 @@
 
 <!-- START :: JAVASCRIPT -->
 	<script type="text/javascript" src="/resources/js/sidebar.js"></script>
-	<script type="text/javascript">
 	
+	<!-- START :: 그룹채널 프로필 이미지 수정 -->
+	<script type="text/javascript">
+		$(function(){
+			
+			$("#profile_image").click(function(){
+				// 채널주인만 수정 가능
+				if('${channel.membercode}' != '${loginMember.membercode}'){
+					return false;
+				}
+				
+				$("#memberImgOriginalName").click();
+			})
+			
+			$("#memberImgOriginalName").change(function(e){
+				var form = $("#profileImageForm")[0];
+				var formData = new FormData(form);
+				
+				$.ajax({
+					type: "POST",
+					enctype: "multipart/form-data",
+					url: "/group/updatememberprofileimage",
+					processData: false,
+					contentType: false,
+					data: formData,
+					dataType: "JSON",
+					success: function(msg){
+						$("#profile_image").attr("src","/resources/images/profileupload/" + msg.img);
+					},
+					error : function() {
+						alert("통신 실패");
+					}
+				})				
+			})
+			
+		})
 	</script>
+	<!-- END :: 그룹채널 프로필 이미지 수정 -->
+	
 <!-- END :: JAVASCRIPT -->
 
 </head>
@@ -49,16 +85,14 @@
 	      <i class="fas fa-bars"></i>
 	    </a>
 	    
-	    <nav id="sidebar" class="sidebar-wrapper row">	    	
+	    <nav id="sidebar" class="sidebar-wrapper row">	
 	    		
     		<div class="col-3">
     			
     			<div id="my_group_channel_container">
-    			
     			</div>
     			
     			<div id="follow_group_channel_container">
-    			
     			</div>
     			
     			<div id="addChannel" onclick="goMainPage()">
@@ -73,7 +107,7 @@
     			<div class="sidebar-content">
       
 		      		<div class="sidebar-brand">
-			        	<a href="#">채널이름 : ${channel.channelname}</a>
+			        	<a href="/group/channel?channelcode=${channel.channelcode}">채널이름 : ${channel.channelname}</a>
 			        	<div id="close-sidebar">
 			            	<i class="fas fa-times"></i>
 			        	</div>
@@ -81,11 +115,32 @@
 		        
 		        
 			        <div class="sidebar-header">
+			        
+						<!-- START :: 멤버 프로필 이미지 -->
 						<div class="user-pic">
-							<img class="img-responsive img-rounded"
-							  src="/resources/images/profileupload/${loginProfile.memberImgServerName }"
-							  alt="User picture">
+			               <form id="profileImageForm" action="/DEVCA/member/privacyprofileimageupdate.do" method="POST" enctype="multipart/form-data">
+			                  <input type="hidden" name="MEMBER_CODE" value="${member.MEMBER_CODE }">
+			                  
+			                  <div style="text-align: center;">            
+			                     <img id="profile_image" src="
+			                                       <c:choose>
+			                                          <c:when test="${not empty loginProfile.memberImgServerName}">
+			                                          	/resources/images/profileupload/${loginProfile.memberImgServerName }
+			                                          </c:when>
+			                                          <c:otherwise>
+			                                          	/resources/images/profileupload/default.png
+			                                          </c:otherwise>
+			                                       </c:choose>   
+			                                       ">
+								<input id="memberImgOriginalName" type="file" name="memberImgOriginalName" value="${loginProfile.memberImgOriginalName }">					
+			                     
+			                  </div>
+			                  
+			               </form>
+							  
 						</div>
+						<!-- END :: 멤버 프로필 이미지 -->
+						
 						<div class="user-info">
 							<span class="user-name">${loginMember.memberid}</span>
 							<span class="user-role">${loginMember.memberemail }</span>
@@ -94,22 +149,7 @@
 								<span>Online</span>
 							</span>
 						</div>
-			        </div>
-		        
-		        
-					<div class="sidebar-search">
-						<div>
-							<div class="input-group">
-								<input type="text" class="form-control search-menu" placeholder="Search...">
-								<div class="input-group-append">
-									<span class="input-group-text">
-										<i class="fa fa-search" aria-hidden="true"></i>
-									</span>
-								</div>
-							</div>
-						</div>
-					</div>
-		        
+			        </div>		        
 	
 					<div class="sidebar-menu">
 						<ul>
@@ -130,32 +170,85 @@
 									<c:if test="${loginMember.membercode eq channel.membercode || follow.followerrole eq 'E'}">
 										<ul>
 											<li>
-												<a href="javascript:makeChatRoom();">+ Add a Chatting Room</a>
+												<a data-toggle="modal" data-target="#makeNewChatRoom">+ Add a Chatting Room</a>
 											</li>
 										</ul>
 									</c:if>
 								</div>
+								
+								<!-- START :: 채팅방 만들기 modal -->
+								<div class="modal" id="makeNewChatRoom">
+									<div class="modal-dialog">
+										<div class="modal-content">
+									
+									    <!-- Modal Header -->
+									    <div class="modal-header">
+									    	<h4 class="modal-title">채팅방 만들기</h4>
+									    	<button type="button" class="close" data-dismiss="modal">&times;</button>
+									    </div>
+									
+									    <!-- Modal body -->
+									    <div class="modal-body">
+									    	<input type="text" id="chatRoomName">
+									    </div>
+									
+									    <!-- Modal footer -->
+									    <div class="modal-footer">
+									    	<button type="button" onclick="makeChatRoom();">만들기</button>
+									    </div>
+									
+									 	</div>
+									</div>
+								</div>
+								<!-- END :: 채팅방 만들기 modal -->
+								
 							</li>
 							
 							<li class="sidebar-dropdown">
 								<a href="#">
 									<i class="fa fa-shopping-cart"></i>
 									<span>WebRTC</span>
-									<span id="rtc_list_size" class="badge badge-pill badge-danger">3</span>
+									<span id="rtc_list_size" class="badge badge-pill badge-danger"></span>
 								</a>
 								<div class="sidebar-submenu">
-									<ul id="">
-										<li>
-											<a href="#">Example</a>
-										</li>
-										<li>
-											<a href="#">Example</a>
-										</li>
-										<li>
-											<a href="#">Example</a>
-										</li>
+									<ul id="rtc_room_ul">
 									</ul>
+									
+									<c:if test="${loginMember.membercode eq channel.membercode || follow.followerrole eq 'E'}">
+										<ul>
+											<li>
+												<a data-toggle="modal" data-target="#makeNewRtcRoom">+ Add a Conference Room</a>
+											</li>
+										</ul>
+									</c:if>
 								</div>
+								
+								<!-- START :: 화상채팅방 만들기 modal -->
+								<div class="modal" id="makeNewRtcRoom">
+									<div class="modal-dialog">
+										<div class="modal-content">
+									
+									    <!-- Modal Header -->
+									    <div class="modal-header">
+									    	<h4 class="modal-title">화상채팅방 만들기</h4>
+									    	<button type="button" class="close" data-dismiss="modal">&times;</button>
+									    </div>
+									
+									    <!-- Modal body -->
+									    <div class="modal-body">
+									    	<input type="text" id="rtcRoomName">
+									    </div>
+									
+									    <!-- Modal footer -->
+									    <div class="modal-footer">
+									    	<button type="button" onclick="makeRtcRoom();">만들기</button>
+									    </div>
+									
+									 	</div>
+									</div>
+								</div>
+								<!-- END :: 화상채팅방 만들기 modal -->
+								
 							</li>
 							
 							<li class="header-menu">
@@ -230,7 +323,7 @@
 			selectFollowGroupChannelList()
 			
 			// 이 채널의 채팅방 리스트 가져오기
-			findGroupChanelChatRoomList()
+			findGroupChannelChatRoomList()
 
 			// 에디터 ROLE을 가진 팔로워 가져오기
 			selectFollowerRoleEditer();
@@ -245,8 +338,9 @@
 
 <!-- START :: 채널 입장하기 -->
 	<script type="text/javascript">
-		function openChannel(channelcode){
-			location.href = "/?channelcode=" + channelcode; 	
+		function openChannel(channelcode) {
+			alert(channelcode, "번 채널 눌렀따~~~");
+			location.href = "/group/channel?channelcode=" + channelcode; 	
 		}
 	</script>
 <!-- END :: 채널 입장하기 -->
@@ -368,10 +462,10 @@
 
 <!-- START :: 채팅방 리스트 가져오기 -->
 	<script type="text/javascript">
-		function findGroupChanelChatRoomList(){
+		function findGroupChannelChatRoomList(){
 			$.ajax({
 				type: "post",
-				url: "/chat/findGroupChanelChatRoomList",
+				url: "/chat/findGroupChannelChatRoomList",
 				data: JSON.stringify({
 					channelcode : '${channel.channelcode}'
 				}),
@@ -466,7 +560,10 @@
 			$.ajax({
 				type: "post",
 				url: "/chat/makeChatRoom",
-				data: JSON.stringify(jsonArray),
+				data: {
+					"memberList" : JSON.stringify(jsonArray),
+					"room_name" : $("#chatRoomName").val()
+				},
 				contentType: "application/json",
 				dataType: "json",
 				
@@ -493,6 +590,91 @@
 		}
 	</script>
 <!-- END :: 채팅방 입장하기 -->
+
+
+<!-- START :: 화상채팅방 리스트 가져오기 -->
+	<script type="text/javascript">
+		function findGroupChannelRtcRoomList(){
+			$.ajax({
+				type: "post",
+				url: "/rtc/findGroupChannelRtcRoomList",
+				data: JSON.stringify({
+					channelcode : '${channel.channelcode}'
+				}),
+				contentType: "application/json",
+				dataType: "json",
+				
+				success: function(data){
+					console.log(data)
+					$("#rtc_room_ul").empty();
+					fillRtcRoomList(data);
+				},
+				
+				error: function(){
+					alert("통신실패");
+				}
+			})
+		}
+	</script>
+<!-- END :: 화상채팅방 리스트 가져오기 -->
+
+<!-- START :: 화상채팅방 리스트 뿌리기 -->
+	<script type="text/javascript">
+		function fillRtcRoomList(data){
+			$("#rtc_list_size").text(data.length);
+			
+			$.each(data, function(index, item) {
+				
+				var chat_list = $("<li>").attr({"class":"rtc_list", "data-roomcode":item.room_code, "onclick":"openChatRoom(" + item.room_code + ", this);"});
+				var chat_room_name = $("<a>").attr({"class":"rtc_room_name"}).text(item.room_name);
+					
+				$("#rtc_room_ul").append(chat_list.append(chat_room_name));
+			});
+		}
+	</script>
+<!-- END :: 화상채팅방 리스트 뿌리기 -->
+	
+<!-- START :: 화상채팅방 생성 -->
+	<script type="text/javascript">
+		function makeRtcRoom(){
+			console.log("makeRtcRoom");
+			
+			$.ajax({
+				type: "post",
+				url: "/rtc/makeRtcRoom",
+				data: {
+					room_name : $("#rtcRoomName").val()
+				},
+				contentType: "application/json",
+				dataType: "json",
+				
+				success: function(msg) {
+					console.log(msg.insertedRtcRoom);
+					
+					var data = new Array();
+					data.push(msg.insertedRtcRoom);
+					fillRtcRoomList(data);
+					
+					// 만들고 바로 입장
+					openRtcRoom(msg.insertedRtcRoom.room_code, thisElem);
+				},
+				
+				error: function() {
+					alert("통신실패");
+				}
+			});
+		}
+	</script>
+<!-- END :: 화상채팅방 생성  -->
+
+<!-- START :: 화상채팅방 입장하기  -->
+	<script type="text/javascript">
+		function openRtcRoom(room_code, thisElem) {
+			location.href="/rtc/rtcroom?room_code=" + room_code;
+		}
+	</script>
+<!-- END :: 화상채팅방 입장하기 -->
+
 
 <!-- START :: 에디터 리스트 가져오기 -->
 	<script type="text/javascript">
@@ -528,7 +710,8 @@
 	<script type="text/javascript">
 		function fillEditorList(data){
 			$("#editor_list_size").text(data.length);
-
+			$("#editor_list_container").empty();
+			
 			$.each(data, function(index, item){
 				
 				var li_item = $("<li>").attr({"class":"editor d-flex align-items-center ml-2"});

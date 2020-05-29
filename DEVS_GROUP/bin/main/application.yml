@@ -1,15 +1,15 @@
 server:
-  port: 8989
+  port: 80
   servlet:
     context-path: /
     
   # ssl
-#  ssl:
-#    enabled: true
-#    key-store: /etc/letsencrypt/live/www.devsgroup.ml/keystore.p12
-#    key-store-password: 
-#    key-store-type: PKCS12
-#    key-alias: tomcat
+  ssl:
+    enabled: true
+    key-store: /etc/letsencrypt/live/www.devsgroup.ml/keystore.p12
+    key-store-password: 
+    key-store-type: PKCS12
+    key-alias: tomcat
     
     
 ssoDomain: www.devssso.ml
@@ -17,26 +17,24 @@ ssoServerPort: 80
 
 
 # 서버 배포용    
-#clientDomain: www.devsgroup.ml
-#systemName: DEVS_GROUP
-#clientSocketProtocol: wss
-#clientProtocol: https
+clientDomain: www.devsgroup.ml
+systemName: DEVS_GROUP
+clientSocketProtocol: wss
+clientProtocol: https
 
 
 # 로컬 테스트용
-clientDomain: localhost
-systemName: GROUP_TEMP
-clientSocketProtocol: ws
-clientProtocol: http
-
-
-
+#clientDomain: localhost
+#systemName: GROUP_TEMP
+#clientSocketProtocol: ws
+#clientProtocol: http
 
   
 spring:  
   batch:
     job:
       enabled: false
+      
       
   # oracle
   datasource:

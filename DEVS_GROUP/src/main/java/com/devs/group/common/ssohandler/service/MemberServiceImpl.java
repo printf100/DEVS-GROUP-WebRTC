@@ -107,4 +107,19 @@ public class MemberServiceImpl implements MemberService {
 		return memberJoinProfileSimpleVoList;
 	}
 
+	// 멤버 프로필 이미지 수정하기
+	@Override
+	public MemberProfile updateMemberProfileImage(int membercode, MemberProfile newMemberProfile) {
+		
+		MemberProfile oldMemberProfile = memberProfileRepository.findByMembercode(membercode);
+
+		oldMemberProfile.setMemberImgOriginalName(newMemberProfile.getMemberImgOriginalName());
+		oldMemberProfile.setMemberImgServerName(newMemberProfile.getMemberImgServerName());
+		oldMemberProfile.setMemberImgPath(newMemberProfile.getMemberImgPath());
+		
+		MemberProfile changedMemberProfile = memberProfileRepository.save(oldMemberProfile);
+		
+		return changedMemberProfile;
+	}
+
 }

@@ -49,9 +49,6 @@ dependencies {
 	// webrtc adapter.js
 	compile group: 'org.webjars.bower', name: 'webrtc-adapter', version: '6.4.0'
 	
-	// mongodb
-	// compile group: 'org.mongodb', name: 'mongo-java-driver', version: '3.11.2'
-	
 	// ojdbc6
 	compile 'com.oracle:ojdbc6:11.2.0.3'
 	runtime 'com.oracle:ojdbc6:11.2.0.3'

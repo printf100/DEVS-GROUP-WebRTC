@@ -25,9 +25,7 @@
 <style type="text/css">
 
 .container {
-    background: rgb(148, 144, 144);
     margin: 50px auto;
-    max-width: 80%;
     text-align: center;
     padding: 2%;
 }
@@ -49,18 +47,20 @@ input {
     width: 100%;
 }
 
-.videos {
+#videos {
 	display: flex;
 	flex-wrap: wrap;
 }
 
-.videos > div {
+#videos > div {
 	width: 50%;
 }
 
 video {
 	width: 320px;
 	height: 240px;
+	
+	/* 화면 좌우반전 */
     transform: rotateY(180deg);
     -webkit-transform:rotateY(180deg); /* Safari and Chrome */
     -moz-transform:rotateY(180deg); /* Firefox */
@@ -77,91 +77,45 @@ video {
 </head>
 <body>
 
-	<div class="container">
-		<h1>WebRTC</h1>
-	
-<!-- 		<div id="myView"> -->
-<!-- 		  <video id="myVideo" width="320" height="240" autoplay style="display: inline;"></video> -->
-<!-- 		</div> -->
-
-<!-- 		<div id="remoteViews"> -->
-<!-- 		   <video id="remoteView" width="320" height="240" autoplay="autoplay" style="display: inline;"></video> -->
-<!-- 		</div> -->
-
-		<div class="videos">
-            <div>
-                <video id="myVideo" autoplay muted playsinline></video>
-            </div>
-        </div>
-        
-        <div id="connections"></div>
-
-<!-- 		<div id="divStartRTC"> -->
-<!-- 			<button id="startRTC" onclick="startRTC();">화상채팅 시작하기</button> -->
-<!-- 			<input id="participant" type="text"><button onclick="getOffer();">초대하기</button> -->
-<!-- 		</div> -->
-	
+	<div class="row">
+		
+		<!-- START :: SIDEBAR FORM -->
+		<div class="col-lg-3">
+			<%@ include file="form/sidebar.jsp"%>
+		</div>
+		<!-- END :: SIDEBAR FORM -->
+		
+		
+		<!-- START :: page - content -->
+		<div class="col-lg-9">
+			
+	    	<!-- START :: 화상채팅 -->
+	    	<div class="container">
+				<h1>${sessionScope.roomInfo.room_name }</h1>
+		
+		        <div>
+		            <video id="myVideo" width="400" height="300" autoplay></video>
+		        </div>
+		
+				<div id="videos"></div>
+		        
+			</div>
+	    	<!-- END :: 화상채팅 -->
+	    	
+		</div>
+		<!-- END :: page - content -->
+		
 	</div>
 	
-	<script src='/resources/js/adapter-latest.js'></script>
-	<script src='/resources/js/main2.js'></script>
+	
+	<script src='/resources/js/main.js'></script>
 	
 	<script type="text/javascript">
 	
-		var HEAD = "";
-		
 		$(function(){
 		    console.log("${loginMember.memberid}");
 		    connect("${loginMember.memberid}");
-		    
-		 	$("#startRTC").click(function() {
-		 		HEAD = MEMBER_ID;	// 방장 아아디 셋팅
-		 	});
-		 	
-// 		 	if(HEAD == "" || HEAD != MEMBER_ID) {
-// 		 		$("#divStartRTC").hide();
-// 		 	}
 		 });
-		 
-		 function getOffer(){
-		    var participant = $("#participant").val();
-		    
-		    offer(participant);
-		 }
-		 
-		 function addMyView(stream) {
-			 console.log("내 화면 입력");
-			 
-			 var myVideo = $("video").attr({
-					"id" : "myVideo",
-					"width" : "320",
-					"height" : "240",
-					"autoplay" : "autoplay",
-					"style" : "display: inline;"
-			})
-				
-			$("#myView").append(myVideo);
-			 
-			 myVideo.srcObject = stream;
-		 }
-		 
-		 var newVideoId = 0;
-		 function addNewPeer(stream) {
-			 console.log("상대방 화면 입력");
-
-			 ++newVideoId;
-			 var newVideo = $("video").attr({
-					"id" : newVideoId,
-					"width" : "320",
-					"height" : "240",
-					"autoplay" : "autoplay",
-					"style" : "display: inline;"
-				})
-				
-				$("#remoteViews").append(newVideo);
-			 
-				newVideoId.srcObject = stream;
-		 }
 	
 	</script>
 

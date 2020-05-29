@@ -158,7 +158,8 @@ public class ChatSocketHandler extends TextWebSocketHandler {
 					out.setType(CHAT_SEND_TYPE);
 
 					Map<String, Object> map = new HashMap<>();
-					map.put("writer_img", ((MemberProfile) session.getAttributes().get("profile")).getMemberImgServerName());
+					map.put("writer_img",
+							((MemberProfile) session.getAttributes().get("profile")).getMemberImgServerName());
 					map.put("new_chat", newChat);
 					out.setData(map);
 

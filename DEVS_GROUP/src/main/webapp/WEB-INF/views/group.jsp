@@ -150,7 +150,7 @@
 			})
 		}
 		
-		function fillFollowGroupChannelList_main(data){
+		function fillFollowGroupChannelList_main(data) {
 			$.each(data, function(index, item){
 				
 				var div = $("<div>").attr({"class":"follow_channel", "data-channelcode":item.channelcode, "onclick":"openChannel(" + item.channelcode + ");"});
@@ -171,7 +171,7 @@
 <!-- START :: 채널 입장하기 -->
 	<script type="text/javascript">
 		function openChannel(channelcode){
-			location.href = "/?channelcode=" + channelcode; 	
+			location.href = "/group/channel?channelcode=" + channelcode; 	
 		}
 	</script>
 <!-- END :: 채널 입장하기 -->

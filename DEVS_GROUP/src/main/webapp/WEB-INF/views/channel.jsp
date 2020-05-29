@@ -74,7 +74,16 @@
 				
 				<!-- START :: 채널 이미지 -->
 				<form id="imageForm" action="/group/updatechannelimage" method="POST" enctype="multipart/form-data">
-					<img id="channel_image" src="/resources/images/groupchannelprofileupload/${channel.channelimgservername }">
+					<img id="channel_image" src="
+			                                       <c:choose>
+			                                          <c:when test="${not empty channel.channelimgservername}">
+			                                          	/resources/images/groupchannelprofileupload/${channel.channelimgservername }
+			                                          </c:when>
+			                                          <c:otherwise>
+			                                          	/resources/images/groupchannelprofileupload/default.png
+			                                          </c:otherwise>
+			                                       </c:choose>   
+			                                       ">
 					<input type="file" name="channelimgoriginalname" value="${channel.channelimgoriginalname }">					
 				</form>
 				<!-- END :: 채널 이미지 -->

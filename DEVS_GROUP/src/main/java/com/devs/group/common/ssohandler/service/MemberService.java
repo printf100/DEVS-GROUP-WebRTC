@@ -15,6 +15,9 @@ public interface MemberService {
 	// 로그인 한 멤버 프로필 가져오기
 	MemberProfile getMemberProfile(int membercode);
 
+	// 멤버 프로필 이미지 수정하기
+	MemberProfile updateMemberProfileImage(int membercode, MemberProfile newMemberProfile);
+
 	List<MemberJoinProfileSimpleVo> nameSearchAutoComplete(int my_member_code, String id_name);
 
 	List<MemberJoinProfileSimpleVo> selectMemberList(List<Integer> codeList);

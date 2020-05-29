@@ -18,22 +18,10 @@ public class MainController {
 
 	private static final Logger logger = LoggerFactory.getLogger(GroupController.class);
 
-	@Autowired
-	private SideBarService sideBarService;
-
 	// 프로그램 초기 진입
 	@GetMapping("")
-	public String index(HttpSession session, Integer channelcode) {
-
-		if (channelcode == null) {
-			session.removeAttribute("channel");
-			return "redirect:/group/";
-		} else {
-			session.setAttribute("channel", sideBarService.selectChannel(channelcode));
-			session.setAttribute("follow", sideBarService.selectGroupFollow(channelcode,
-					((Member) session.getAttribute("user")).getMembercode()));
-			return "redirect:/group/channel";
-		}
+	public String index(HttpSession session) {
+		return "redirect:/group/";
 	}
 
 }

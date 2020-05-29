@@ -9,7 +9,7 @@ import org.springframework.web.socket.config.annotation.WebSocketHandlerRegistry
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
 import com.devs.group.common.socket.ChatSocketHandler;
-import com.devs.group.common.socket.SocketHandler;
+import com.devs.group.common.socket.RtcSocketHandler;
 
 @Configuration
 @EnableWebSocket
@@ -20,8 +20,8 @@ public class WebSocketConfiguration implements WebSocketConfigurer {
 //		registry.addHandler(new SocketHandler(), "/socket").setAllowedOrigins("*");
 		registry
 				// handle on "/signal" endpoint
-				.addHandler(signalingSocketHandler(), "/signal")
-				.addHandler(chattingSocketHandler(), "/chatsocket")
+				.addHandler(signalingSocketHandler(), "/signal")//
+				.addHandler(chattingSocketHandler(), "/chatsocket")//
 				// Allow cross origins
 				.setAllowedOrigins("*")
 				// Httpsession에 있는 값을 가로채서 WebSocketSession에 똑같이 넣어주는 역할을 한다.
@@ -30,11 +30,12 @@ public class WebSocketConfiguration implements WebSocketConfigurer {
 
 	@Bean
 	public WebSocketHandler signalingSocketHandler() {
-		return new SocketHandler();
+		return new RtcSocketHandler();
 	}
 
 	@Bean
 	public WebSocketHandler chattingSocketHandler() {
 		return new ChatSocketHandler();
 	}
+
 }

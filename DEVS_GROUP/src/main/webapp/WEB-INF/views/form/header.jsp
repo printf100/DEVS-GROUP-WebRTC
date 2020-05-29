@@ -52,8 +52,7 @@
 	<script type="text/javascript" src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
 	<script type="text/javascript" src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 	   
-	<script src='/resources/js/adapter.js'></script>
-	<script src='/resources/js/main.js'></script>
+	<script src='/resources/js/adapter-latest.js'></script>
 	<script src='/resources/js/chat_socket.js'></script>
 	
 	<script type="text/javascript">
@@ -78,7 +77,7 @@
 		<nav class="navbar bg-white border">
 			<div class="d-flex justify-content-center mx-auto">
 				<!-- brand icon -->
-				<a class="navbar-brand mr-5" href="/feed/feed"><h3>instagram</h3></a>				
+				<a class="navbar-brand mr-5" href="/group/"><h3>instagram</h3></a>				
 	
 				<!-- 검색창 -->
 				<form id="headerSearch" class="form-inline mx-5" action="/member/headerSearch" method="post">

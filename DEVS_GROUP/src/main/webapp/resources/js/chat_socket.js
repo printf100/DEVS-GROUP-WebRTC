@@ -1,7 +1,7 @@
 function connectChatSocket(){
     // 웹소켓 객체 생성
 	var loc = window.location
-	var uri = CLIENT_SOCKET_PROTOCOL + "://" + loc.hostname + ":8989/chatsocket"
+	var uri = CLIENT_SOCKET_PROTOCOL + "://" + loc.hostname + "/chatsocket"
 	console.log("uri : " + uri);
 	ws = new WebSocket(uri)
 }
