@@ -15,69 +15,75 @@
 	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.css" type="text/css" rel="stylesheet"/>
 	<link href="/resources/css/chat.css" rel="stylesheet" type="text/css">
 	<style type="text/css">
+	
+		#write_image {
+			/* 파일 필드 숨기기 */
+			display: none;
+		}
+
 	</style>
 <!-- END :: css -->
 </head>
 
 <body>
 	
-	<div class="row">
+	<div class="page-wrapper chiller-theme toggled">
 		
 		<!-- START :: SIDEBAR FORM -->
-		<div class="col-lg-3">
-			<%@ include file="form/sidebar.jsp"%>
-		</div>
+		<%@ include file="form/sidebar.jsp"%>
 		<!-- END :: SIDEBAR FORM -->
 		
-		
-		
 		<!-- START :: page - content -->
-		<div class="col-lg-9">
-			
-	    	<!-- START :: 채팅 -->
-	    		<h1>${chatRoomInfo.room_name }</h1>
-	    	
-	    		<section class="container w-100 h-700">		
-					<div class="container">			
-						<div class="messaging">
-							<div class="inbox_msg">
-															
-								<!-- START :: 채팅 메세지 리스트 -->
-					          	<div class="mesgs">
+		<main class="page-content">	
+			<div class="container-fluid">
 
-					            	<div id="messages" class="msg_history scroll_fix_bottom">               
-					            	</div>
-					             
-					            	<div class="type_msg">
-						              	<div class="input_msg_write">
-						              		<input type="hidden" name="room_code">				
-						              	
-						              		<!-- START :: 사진 전송하기 -->
-											<div class="writer_img">
-								            	<form id="imageForm" action="/chat/sendImage" method="POST" enctype="multipart/form-data">
-													<input id="write_image" type="file" name="write_image">					
-												</form>
-											</div>
-											<!-- END :: 사진 전송하기 -->
-											
-						                	<input type="text" class="write_msg" id="messageinput" placeholder="메시지 입력..." />
-
-						                	<button class="msg_send_btn" id="sendMessage" type="button"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
-						              	</div>
-					            	</div>
-					          		
-					          	</div>
-					          	<!-- END :: 채팅 메세지 리스트 -->		
-					          		
-							</div>			
-						</div>		
+		    		<!-- START :: 채팅 -->
+		    		<div class="page-content" id="channel_description">
+			    		<section class="container w-100 h-700">		
+				    		<h4 style="text-align: center;">${chatRoomInfo.room_name }</h4>
+							<div class="container">			
+								<div class="messaging">
+									<div class="inbox_msg">
+																	
+										<!-- START :: 채팅 메세지 리스트 -->
+							          	<div class="mesgs">
+		
+							            	<div id="messages" class="msg_history scroll_fix_bottom">               
+							            	</div>
+							             
+							            	<div class="type_msg">
+								              	<div class="input_msg_write">
+								              		<input type="hidden" name="room_code">				
+								              	
+								              		<!-- START :: 사진 전송하기 -->
+													<div class="msg_send_btn" style="right: 40px; cursor: pointer;">
+							              				<i class="fa fa-upload" style="padding: 6px 0px 0px 8px;" aria-hidden="true"></i>
+										            	<form id="imageForm" action="/chat/sendImage" method="POST" enctype="multipart/form-data">
+															<input id="write_image" type="file" name="write_image">					
+														</form>
+													</div>
+													<!-- END :: 사진 전송하기 -->
+													
+								                	<input type="text" class="write_msg" id="messageinput" placeholder="메시지를 입력해주세요." />
+		
+								                	<button class="msg_send_btn" id="sendMessage" type="button"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
+								              	</div>
+							            	</div>
+							          		
+							          	</div>
+							          	<!-- END :: 채팅 메세지 리스트 -->		
+							          		
+									</div>			
+								</div>		
+							</div>
+							
+							
+						</section>
 					</div>
-					
-					
-				</section>
-	    	<!-- END :: 채팅 -->
-	    	
-		</div>
+			    	<!-- END :: 채팅 -->
+
+		    </div>
+		</main>
 		<!-- END :: page - content -->
 		
 	</div>
@@ -86,6 +92,11 @@
 
 <!-- START :: 사진 전송하기 -->
 	<script type="text/javascript">
+	
+		$(".fa-upload").click(function() {			
+			$("#write_image").click();
+		});
+		
 		$("#write_image").change(function() {
 			
 			var ext = $('#write_image').val().split('.').pop().toLowerCase();

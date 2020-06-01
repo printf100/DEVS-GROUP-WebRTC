@@ -26,12 +26,6 @@
 <!-- <link href="resources/css/master.css" rel="stylesheet" type="text/css"> -->
 <style type="text/css">
 
-.container {
-    margin: 50px auto;
-    text-align: center;
-    padding: 2%;
-}
-
 button {
     margin: 1em;
 }
@@ -78,55 +72,46 @@ input {
 </style>
 <!-- END :: CSS -->
 
-<!-- START :: JAVASCRIPT -->
-<script type="text/javascript">
-</script>
-<!-- END :: JAVASCRIPT -->
-
 </head>
 <body>
 
-	<div class="row">
-		
+	<div class="page-wrapper chiller-theme toggled">		
+	
 		<!-- START :: SIDEBAR FORM -->
-		<div class="col-lg-3">
-			<%@ include file="form/sidebar.jsp"%>
-		</div>
+		<%@ include file="form/sidebar.jsp"%>
 		<!-- END :: SIDEBAR FORM -->
 		
-		
 		<!-- START :: page - content -->
-		<div class="col-lg-9">
-			<h1>${sessionScope.roomInfo.room_name }</h1>
-			
-			<div class="row">
-							
-					<!-- START :: 화상채팅 -->
-					<div class="col-lg-8">
-						<div>
-							<video id="sharedscreen" width="800" height="600" style="display: none;" autoplay></video>
-						</div>
-				
-				        <div id="myVideos">
-				            <video id="myVideo" width="400" height="300" style="display: inline;" autoplay></video>
-				            <video id="myScreenCapture" width="400" height="300" style="display: none;" autoplay></video>
-				            <button type="button" id="share_screen" onclick="screenSharing();">화면공유하기</button>
-				        </div>
-				
-			
-						<div id="videos">
-						</div>
-						
-					</div>
-					<!-- END :: 화상채팅 -->
+		<main class="page-content">
+			<div class="container-fluid">
+				<div class="page-content" id="channel_description">
+					<h3 style="text-align: center;">${sessionScope.roomInfo.room_name }</h3>
 					
+					<div class="row">
+						<!-- START :: 화상채팅 -->
+						<div class="col-lg-9">
+							<div>
+								<video id="sharedscreen" width="800" height="600" style="display: none;" autoplay></video>
+							</div>
 					
-					<!-- START :: 채팅 -->
-					<div class="col-lg-4">
-						
-						<section class="container w-100 h-700">		
+					        <div id="myVideos">
+					            <video id="myVideo" width="400" height="300" style="display: inline;" autoplay></video>
+					            <video id="myScreenCapture" width="400" height="300" style="display: none;" autoplay></video>
+					            <button type="button" id="share_screen" onclick="screenSharing();">화면공유하기</button>
+					        </div>
+					
+				
+							<div id="videos">
+							</div>
 							
-							<div class="container">			
+						</div>
+						<!-- END :: 화상채팅 -->
+						
+						<!-- START :: 채팅 -->
+						<div class="col-lg-3">
+							
+							<section class="w-100 h-100">		
+								
 								<div class="messaging">
 									<div class="inbox_msg">
 																	
@@ -139,9 +124,9 @@ input {
 							            	<div class="type_msg">
 								              	<div class="input_msg_write">
 								              		<input type="hidden" name="room_code">				
-								                	<input type="text" class="write_msg" id="messageinput" placeholder="메시지 입력..." />
+								                	<input type="text" class="write_msg" id="messageinput" placeholder="메시지를 입력해주세요." />
 					
-								                	<button class="msg_send_btn" id="sendMessage" type="button"><i class="fa fa-paper-plane-o" aria-hidden="true"></i></button>
+								                	<button class="msg_send_btn" id="sendMessage" type="button"><i class="fa fa-pencil-square-o" aria-hidden="true"></i></button>
 								              	</div>
 							            	</div>
 							          		
@@ -150,26 +135,25 @@ input {
 							          		
 									</div>			
 								</div>		
-							</div>
-							
-						</section>
+								
+							</section>
+						</div>
+						<!-- END :: 채팅 -->
+						
 					</div>
-					<!-- END :: 채팅 -->
 					
-
-			</div>
-	    	
-		</div>
+				</div>
+	    	</div>
+		</main>		
 		<!-- END :: page - content -->
 		
 	</div>
-	
 	
 	<script src='/resources/js/webrtc_socket.js'></script>
 	
 	<script type="text/javascript">
 	
-		$(function(){
+		$(function() {
 		    console.log("${loginMember.memberid}");
 		    connect("${loginMember.memberid}");
 		    
@@ -235,7 +219,7 @@ input {
 		// 채팅 입력
 		$(function() {
 			
-			$("#messageinput").keyup(function(e){
+			$("#messageinput").keyup(function(e) {
 				e.preventDefault();
 				
 				var messageinput = $("#messageinput").val();

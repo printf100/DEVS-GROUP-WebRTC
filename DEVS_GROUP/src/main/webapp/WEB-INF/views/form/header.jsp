@@ -21,16 +21,12 @@
    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
 <!-- end bootstrap --!>
 
-<!-- START :: css -->
+<!-- START :: CSS -->
 	<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-<!-- 	<link href="/resources/css/master.css" rel="stylesheet" type="text/css"> -->
-	
-	<style type="text/css">
-	
-	</style>
-<!-- END :: css -->
+<!-- END :: CSS -->
 
 <!-- START :: set JSTL variable -->
 	<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -78,33 +74,18 @@
 </head>
 <body>
 	<header>
-		<nav class="navbar bg-white border">
-			<div class="d-flex justify-content-center mx-auto">
-				<!-- brand icon -->
-				<a class="navbar-brand mr-5" href="/group/"><h3>instagram</h3></a>		
-	
-				<!-- 검색창 -->
-				<form id="headerSearch" class="form-inline mx-5" action="/member/headerSearch" method="post">
-					<div class="input-group">
-						<div class="input-group-prepend">	
-							<span id="headerSearchSubmitButton" class="input-group-text bg-light"><i class="fas fa-search" onclick=";"></i></span>						
-						</div>
-						
-						<input class="form-control bg-light" type="text" name="search" value="${search}" placeholder="검색">
-						
-						<div class="input-group-append">	
-							<span id="headerSearchSubmitButton" class="input-group-text bg-light"><i class="fas fa-times-circle" onclick=";"></i></span>						
-						</div>
-					</div>
-				</form>				
-				
-				<!-- nav list -->						
-				<ul class="navbar-nav list-group-horizontal ml-5">
-					<li class="nav-item">
-						<h4 class="mx-2"><a class="nav-link" href="/ssoclient/logout"><i class="fas fa-sign-out-alt"></i></a></h4>
-					</li>
-			    </ul>
-			</div>
+		<nav class="navbar bg-white border d-flex justify-content-between">
+		
+			<div></div>
+			<!-- brand icon -->
+			<h3 style="cursor: pointer; color: #2f2f2f; text-decoration: none;" onclick="location.href='/group/'">DEVS GROUP</h3>
+			
+			<!-- nav list -->						
+			<ul class="nav">
+				<li class="nav-item">
+					<h4 style="cursor: pointer; color: #2f2f2f;" onclick="location.href='/ssoclient/logout'"><i class="fas fa-sign-out-alt"></i></h4>
+				</li>
+		    </ul>
 		</nav>
 
 	</header>
@@ -116,18 +97,18 @@
 		
 		    <!-- Modal Header -->
 		    <div class="modal-header">
-		    	<h4 class="modal-title">채팅방 만들기</h4>
+		    	<h5 class="modal-title">채팅방 만들기</h5>
 		    	<button type="button" class="close" data-dismiss="modal">&times;</button>
 		    </div>
 		
 		    <!-- Modal body -->
 		    <div class="modal-body">
-		    	<input type="text" id="chatRoomName">
+		    	<input type="text" class="form-control" id="chatRoomName">
 		    </div>
 		
 		    <!-- Modal footer -->
 		    <div class="modal-footer">
-		    	<button type="button" onclick="makeChatRoom();">만들기</button>
+		    	<button type="button" class="btn btn-dark" onclick="makeChatRoom();">만들기</button>
 		    </div>
 		
 		 	</div>
@@ -142,18 +123,18 @@
 		
 		    <!-- Modal Header -->
 		    <div class="modal-header">
-		    	<h4 class="modal-title">화상채팅방 만들기</h4>
+		    	<h5 class="modal-title">화상채팅방 만들기</h5>
 		    	<button type="button" class="close" data-dismiss="modal">&times;</button>
 		    </div>
 		
 		    <!-- Modal body -->
 		    <div class="modal-body">
-		    	<input type="text" id="rtcRoomName">
+		    	<input type="text" class="form-control" id="rtcRoomName">
 		    </div>
 		
 		    <!-- Modal footer -->
 		    <div class="modal-footer">
-		    	<button type="button" onclick="makeRtcRoom();">만들기</button>
+		    	<button type="button" class="btn btn-dark" onclick="makeRtcRoom();">만들기</button>
 		    </div>
 		
 		 	</div>

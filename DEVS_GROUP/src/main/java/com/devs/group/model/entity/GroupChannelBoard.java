@@ -39,6 +39,5 @@ public class GroupChannelBoard {
 	private String boardcontent;
 
 	@Column(name = "BOARD_REGDATE")
-	@CreatedDate
 	private Date boardregdate;
 }

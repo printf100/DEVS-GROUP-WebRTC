@@ -13,7 +13,17 @@
 <title>Insert title here</title>
 
 <!-- START :: CSS -->
-<!-- <link href="resources/css/master.css" rel="stylesheet" type="text/css"> -->
+<link rel="icon" type="image/png" href="/resources/images/icons/favicon.ico"/>
+<link rel="stylesheet" type="text/css" href="/resources/vendor/bootstrap/css/bootstrap.min.css">
+<link rel="stylesheet" type="text/css" href="/resources/fonts/font-awesome-4.7.0/css/font-awesome.min.css">
+<link rel="stylesheet" type="text/css" href="/resources/fonts/iconic/css/material-design-iconic-font.min.css">
+<link rel="stylesheet" type="text/css" href="/resources/vendor/animate/animate.css">
+<link rel="stylesheet" type="text/css" href="/resources/vendor/css-hamburgers/hamburgers.min.css">
+<link rel="stylesheet" type="text/css" href="/resources/vendor/animsition/css/animsition.min.css">
+<link rel="stylesheet" type="text/css" href="/resources/vendor/select2/select2.min.css">
+<link rel="stylesheet" type="text/css" href="/resources/vendor/daterangepicker/daterangepicker.css">
+<link rel="stylesheet" type="text/css" href="/resources/css/util.css">
+<link rel="stylesheet" type="text/css" href="/resources/css/main.css">
 <style type="text/css">
 </style>
 <!-- END :: CSS -->
@@ -26,148 +36,67 @@
 </head>
 <body>
 
-	<div class="row">
-		
+	<div class="page-wrapper chiller-theme toggled">
+	
 		<!-- START :: SIDEBAR FORM -->
-		<div class="col-lg-3">
-			<%@ include file="form/sidebar.jsp"%>
-		</div>
+		<%@ include file="form/sidebar.jsp"%>
 		<!-- END :: SIDEBAR FORM -->
 		
-		
-		
 		<!-- START :: page - content -->
-		<div class="col-lg-9">
-			
+		<main class="page-content">
+		
 			<!-- START :: 그룹채널 만들기 폼 -->
-			<div>
-				<h1>Group Channel 만들기</h1>
-				<form action="/group/createGroupChannel" method="post">
-					<input type="hidden" name="membercode" value="${loginMember.membercode }">
-					<input type="hidden" name="channeltype" value="G">
+			<div class="container-fluid">
+				<div class="page-content" id="channel_description">
+				
+					<span class="login100-form-title p-b-49">
+						<img src="/resources/images/logo.png" width="10%;"></img>
+						<br><br>
+						Group Channel 만들기
+					</span>
 					
-					채널 이름 : <input type="text" name="channelname" required="required">
+					<div class="row">
+						<form action="/group/createGroupChannel" method="post" class="login100-form validate-form">
+							<input type="hidden" name="membercode" value="${loginMember.membercode }">
+							<input type="hidden" name="channeltype" value="G">
+							
+							<div class="wrap-input100 validate-input m-b-23 mx-auto" data-validate = "Username is reauired">
+								<span class="label-input100" style="font-size: 1.2em;">채널이름 </span>
+								<input class="input100" type="text" name="channelname" required="required" placeholder="만들고 싶은 채널 이름을 입력해주세요">
+								<span class="focus-input100" data-symbol="&#xf206;"></span>
+							</div>
+							
+							<div class="container-login100-form-btn">
+								<div class="wrap-login100-form-btn">
+									<div class="login100-form-bgbtn"></div>
+									<button class="login100-form-btn" type="submit" value="생성">
+										생성
+									</button>
+								</div>
+							</div>
+						</form>
+						<!-- END :: 그룹채널 만들기 폼 -->
+						
+					</div>
 					
-					<input type="submit" value="생성">
-				</form>
-			
-			</div>
-			<!-- END :: 그룹채널 만들기 폼 -->
-			
-			<!-- START :: 나의 그룹채널, 내가 팔로우한 그룹채널 리스트 -->
-			<div>
-				<h1>나의 Group Channel</h1>			
-    			<div id="my_group_channel_c">
-    			</div>
-    			
-    			<h1>팔로우한 Group Channel</h1>
-    			<div id="follow_group_channel_c">
-    			</div>
-			</div>
-			<!-- END :: 나의 그룹채널, 내가 팔로우한 그룹채널 리스트 -->
-	    	
-	    	
-
-	    	
-	    	
-		</div>
+				</div>
+	    	</div>
+	    </main>
 		<!-- END :: page - content -->
 		
 	</div>
 	
-</body>
-
-<!-- START :: 내가만든, 내가 팔로우한 채널 리스트 가져오기 -->
-	<script type="text/javascript">
+	<script src="/resources/vendor/jquery/jquery-3.2.1.min.js"></script>
+	<script src="/resources/vendor/animsition/js/animsition.min.js"></script>
+	<script src="/resources/vendor/bootstrap/js/popper.js"></script>
+	<script src="/resources/vendor/bootstrap/js/bootstrap.min.js"></script>
+	<script src="/resources/vendor/select2/select2.min.js"></script>
+	<script src="/resources/vendor/daterangepicker/moment.min.js"></script>
+	<script src="/resources/vendor/daterangepicker/daterangepicker.js"></script>
+	<script src="/resources/vendor/countdowntime/countdowntime.js"></script>
+	<script src="/resources/js/main.js"></script>
 	
-		$(function() {
-			selectMyGroupChannelList_main();
-			selectFollowGroupChannelList_main();
-		});
-		
-		/////////////////////////////////////////////////////////////////////////////
-
-		function selectMyGroupChannelList_main() {
-			$.ajax({
-				type: "post",
-				url: "/group/selectMyGroupChannelList",
-				data: JSON.stringify({
-					membercode : '${loginMember.membercode}'				
-				}),
-				contentType: "application/json",
-				dataType: "json",
-				
-				success: function(data){
-					console.log("myGroupChannel >>> ");
-					console.log(data);
-					$("#group-channel-container").empty();
-					fillMyGroupChannelList_main(data);
-				},
-				
-				error: function(){
-					alert("통신실패");
-				}
-			});
-		}
-		
-		function fillMyGroupChannelList_main(data){
-			$.each(data, function(index, item){
-				
-				var div = $("<div>").attr({"class":"my_channel", "data-channelcode":item.channelcode, "onclick":"openChannel(" + item.channelcode + ");"});
-				var channel_name = $("<div>").attr({"class":"channel_name"});
-				var channel_img = $("<div>").attr({"class":"channel_img"});
-				
-				channel_name.append($("<div>").text(item.channelname));
-				channel_img.append($("<img>").attr({"src":"/resources/images/groupchannelprofileupload/" + item.channelimgservername}))
-
-				div.append(channel_img).append(channel_name);
-					
-				$("#my_group_channel_c").append(div);
-			})
-		}
-		
-		/////////////////////////////////////////////////////////////////////////////
-		
-		function selectFollowGroupChannelList_main(){
-			$.ajax({
-				type: "post",
-				url: "/group/selectFollowGroupChannelList",
-				data: JSON.stringify({
-					membercode : '${loginMember.membercode}'				
-				}),
-				contentType: "application/json",
-				dataType: "json",
-				
-				success: function(data){
-					console.log("followGroupChannel >>> ")
-					console.log(data)
-					$("#group-channel-container").empty();
-					fillFollowGroupChannelList_main(data)
-				},
-				
-				error: function(){
-					alert("통신실패");
-				}
-			})
-		}
-		
-		function fillFollowGroupChannelList_main(data) {
-			$.each(data, function(index, item){
-				
-				var div = $("<div>").attr({"class":"follow_channel", "data-channelcode":item.channelcode, "onclick":"openChannel(" + item.channelcode + ");"});
-				var channel_name = $("<div>").attr({"class":"channel_name"});
-				var channel_img = $("<div>").attr({"class":"channel_img"});
-				
-				channel_name.append($("<div>").text(item.channelname));
-				channel_img.append($("<img>").attr({"src":"/resources/images/groupchannelprofileupload/" + item.channelimgservername}))
-
-				div.append(channel_img).append(channel_name);
-					
-				$("#follow_group_channel_c").append(div);
-			})
-		}
-	</script>
-<!-- END :: 내가 팔로우한 채널 리스트 가져오기 -->
+</body>
 
 <!-- START :: 채널 입장하기 -->
 	<script type="text/javascript">

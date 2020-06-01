@@ -21,13 +21,18 @@
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
     <link href="https://use.fontawesome.com/releases/v5.0.6/css/all.css" rel="stylesheet">
     
-<!-- START :: css -->	
+<!-- START :: CSS -->	
 	<link href="/resources/css/sidebar.css" rel="stylesheet" type="text/css">
 	<link href="/resources/css/tempstyle.css" rel="stylesheet" type="text/css">
 	<style type="text/css">
 	
+		#memberImgOriginalName {
+			/* 파일 필드 숨기기 */
+			display: none;
+		}
+		
 	</style>
-<!-- END :: css -->
+<!-- END :: CSS -->
 
 <!-- START :: set JSTL variable -->
 	<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
@@ -42,12 +47,7 @@
 		$(function(){
 			
 			$("#profile_image").click(function() {
-				
-				// 채널주인만 수정 가능
-				if('${channel.membercode}' != '${loginMember.membercode}') {
-					return false;
-				}
-				
+							
 				$("#memberImgOriginalName").click();
 			});
 			
@@ -80,180 +80,161 @@
 
 </head>
 <body>
-	<div class="page-wrapper chiller-theme toggled">
 	    
-	    <a id="show-sidebar" class="btn btn-sm btn-dark" href="#">
-	      <i class="fas fa-bars"></i>
-	    </a>
-	    
-	    <nav id="sidebar" class="sidebar-wrapper row">	
-	    		
-    		<div class="col-3">
-    			
-    			<div id="my_group_channel_container">
-    			</div>
-    			
-    			<div id="follow_group_channel_container">
-    			</div>
-    			
-    			<div id="addChannel" onclick="goMainPage()">
-    				<h1 style="color: white; background-color: gray; width: 100px; height: 100px;">
-    					+
-    				</h1>
-    			</div>
-    		</div>
+    <a id="show-sidebar" class="btn btn-sm btn-dark" href="#">
+    	<i class="fas fa-bars"></i>
+    </a>
+    
+    <nav id="sidebar" class="sidebar-wrapper row">	
     		
-    		<div class="col-9">
-    			
-    			<div class="sidebar-content">
-      
-		      		<div class="sidebar-brand">
-			        	<a href="/group/channel?channelcode=${channel.channelcode}">채널이름 : ${channel.channelname}</a>
-			        	<div id="close-sidebar">
-			            	<i class="fas fa-times"></i>
-			        	</div>
-			        </div>
+   		<div class="col-3">
+   			
+   			<div id="my_group_channel_container"></div>
+   			
+   			<div id="follow_group_channel_container"></div>
+   			
+   			<div id="addChannel" onclick="goMainPage()">
+   				<h1 style="cursor: pointer; color: white; text-align:center; background-color: #3a3f48; width: 100px; height: 100px; font-size: 4em; padding-top: 5px;">
+   					+
+   				</h1>
+   			</div>
+   			
+   		</div>
+   		
+   		<div class="col-9">
+   			
+   			<div class="sidebar-content">
+     
+	      		<div class="sidebar-brand">
+		        	<a href="/group/channel?channelcode=${channel.channelcode}">${channel.channelname}</a>
+		        	<div id="close-sidebar">
+		            	<i class="fas fa-times"></i>
+		        	</div>
+		        </div>
+	        
+	        
+		        <div class="sidebar-header">
 		        
-		        
-			        <div class="sidebar-header">
-			        
-						<!-- START :: 멤버 프로필 이미지 -->
-						<div class="user-pic">
-			               <form id="profileImageForm" action="/DEVCA/member/privacyprofileimageupdate.do" method="POST" enctype="multipart/form-data">
-			                  <input type="hidden" name="MEMBER_CODE" value="${member.MEMBER_CODE }">
-			                  
-			                  <div style="text-align: center;">            
-			                     <img id="profile_image" src="
-			                                       <c:choose>
-			                                          <c:when test="${not empty loginProfile.memberImgServerName}">
-			                                          	/resources/images/profileupload/${loginProfile.memberImgServerName }
-			                                          </c:when>
-			                                          <c:otherwise>
-			                                          	/resources/images/profileupload/default.png
-			                                          </c:otherwise>
-			                                       </c:choose>   
-			                                       ">
-								<input id="memberImgOriginalName" type="file" name="memberImgOriginalName" value="${loginProfile.memberImgOriginalName }">					
-			                     
-			                  </div>
-			                  
-			               </form>
-							  
-						</div>
-						<!-- END :: 멤버 프로필 이미지 -->
-						
-						<div class="user-info">
-							<span class="user-name">${loginMember.memberid}</span>
-							<span class="user-role">${loginMember.memberemail }</span>
-							<span class="user-status">
-								<i class="fa fa-circle"></i>
-								<span>Online</span>
-							</span>
-						</div>
-			        </div>		        
-	
-					<div class="sidebar-menu">
-						<ul>
-							<li class="header-menu">
-								<span>Communication</span>
-							</li>
-							
-							<li class="sidebar-dropdown">
-								<a href="#">
-									<i class="fa fa-tachometer-alt"></i>
-									<span>Chatting</span>
-									<span id="chatting_list_size" class="badge badge-pill badge-danger"></span>
-								</a>
-								<div class="sidebar-submenu">
-									<ul id="chat_room_ul">
-									</ul>
-									
-									<c:if test="${loginMember.membercode eq channel.membercode || follow.followerrole eq 'E'}">
-										<ul>
-											<li>
-												<a data-toggle="modal" data-target="#makeNewChatRoom">+ Add a Chatting Room</a>
-											</li>
-										</ul>
-									</c:if>
-								</div>
-								
-
-								
-							</li>
-							
-							<li class="sidebar-dropdown">
-								<a href="#">
-									<i class="fa fa-shopping-cart"></i>
-									<span>WebRTC</span>
-									<span id="rtc_list_size" class="badge badge-pill badge-danger"></span>
-								</a>
-								<div class="sidebar-submenu">
-									<ul id="rtc_room_ul">
-									</ul>
-									
-									<c:if test="${loginMember.membercode eq channel.membercode || follow.followerrole eq 'E'}">
-										<ul>
-											<li>
-												<a data-toggle="modal" data-target="#makeNewRtcRoom">+ Add a Conference Room</a>
-											</li>
-										</ul>
-									</c:if>
-								</div>
-								
-								
-								
-							</li>
-							
-							<li class="header-menu">
-								<span>People</span>
-							</li>
-							<li class="sidebar-dropdown">
-								<a href="#">
-									<i class="fa fa-shopping-cart"></i>
-									<span>Editor</span>
-									<span id="editor_list_size" class="badge badge-pill badge-danger"></span>
-								</a>
-								<div class="sidebar-submenu">
-									<ul id="editor_list_container">
-									</ul>
-								</div>
-							</li>
-							<li class="sidebar-dropdown">
-								<a href="#">
-									<i class="fa fa-shopping-cart"></i>
-									<span>Follower</span>
-									<span id="follower_list_size" class="badge badge-pill badge-danger"></span>
-								</a>
-								<div class="sidebar-submenu">
-									<ul id="follower_list_container">
-									</ul>
-								</div>
-							</li>
-							
-							<li class="header-menu">
-								<span>People</span>
-							</li>
-							<li>
-								<a href="#">
-									<i class="fa fa-book"></i>
-									<span>Documentation</span>
-									
-								</a>
-							</li>
-							<li>
-								<a href="#">
-									<i class="fa fa-calendar"></i>
-									<span>Calendar</span>
-								</a>
-							</li>
-						</ul>
+					<!-- START :: 멤버 프로필 이미지 -->
+					<div class="user-pic" style="cursor: pointer;">
+		               <form id="profileImageForm" action="/DEVCA/member/privacyprofileimageupdate.do" method="POST" enctype="multipart/form-data">
+		                  <input type="hidden" name="MEMBER_CODE" value="${member.MEMBER_CODE }">
+		                  
+		                  <div style="text-align: center;">            
+		                     <img id="profile_image" src="
+		                                       <c:choose>
+		                                          <c:when test="${not empty loginProfile.memberImgServerName}">
+		                                          	/resources/images/profileupload/${loginProfile.memberImgServerName }
+		                                          </c:when>
+		                                          <c:otherwise>
+		                                          	/resources/images/profileupload/default.png
+		                                          </c:otherwise>
+		                                       </c:choose>   
+		                                       ">
+							<input id="memberImgOriginalName" type="file" name="memberImgOriginalName" value="${loginProfile.memberImgOriginalName }">					
+		                     
+		                  </div>
+		                  
+		               </form>
+						  
 					</div>
-				</div>	
-    			
-    		</div>			
-	    	
-		</nav>
-	</div>
+					<!-- END :: 멤버 프로필 이미지 -->
+					
+					<div class="user-info">
+						<span class="user-name">${loginMember.memberid}</span>
+						<span class="user-role">${loginMember.memberemail }</span>
+						<span class="user-status">
+							<i class="fa fa-circle"></i>
+							<span>Online</span>
+						</span>
+					</div>
+		        </div>		        
+
+				<div class="sidebar-menu">
+					<ul>
+						<li class="header-menu">
+							<span>Communication</span>
+						</li>
+						
+						<li class="sidebar-dropdown">
+							<a href="#">
+								<i class="fa fa-comment"></i>
+								<span>Chatting</span>
+								<span id="chatting_list_size" class="badge badge-pill badge-danger"></span>
+							</a>
+							<div class="sidebar-submenu">
+								<ul id="chat_room_ul">
+								</ul>
+								
+								<c:if test="${loginMember.membercode eq channel.membercode || follow.followerrole eq 'E'}">
+									<ul style="cursor: pointer;">
+										<li>
+											<a data-toggle="modal" data-target="#makeNewChatRoom">+ Add a Chatting Room</a>
+										</li>
+									</ul>
+								</c:if>
+							</div>
+							
+
+							
+						</li>
+						
+						<li class="sidebar-dropdown">
+							<a href="#">
+								<i class="fa fa-video-camera"></i>
+								<span>WebRTC</span>
+								<span id="rtc_list_size" class="badge badge-pill badge-danger"></span>
+							</a>
+							<div class="sidebar-submenu">
+								<ul id="rtc_room_ul">
+								</ul>
+								
+								<c:if test="${loginMember.membercode eq channel.membercode || follow.followerrole eq 'E'}">
+									<ul style="cursor: pointer;">
+										<li>
+											<a data-toggle="modal" data-target="#makeNewRtcRoom">+ Add a Conference Room</a>
+										</li>
+									</ul>
+								</c:if>
+							</div>
+							
+							
+							
+						</li>
+						
+						<li class="header-menu">
+							<span>People</span>
+						</li>
+						<li class="sidebar-dropdown">
+							<a href="#">
+								<i class="fa fa-star"></i>
+								<span>Editor</span>
+								<span id="editor_list_size" class="badge badge-pill badge-danger"></span>
+							</a>
+							<div class="sidebar-submenu">
+								<ul id="editor_list_container">
+								</ul>
+							</div>
+						</li>
+						<li class="sidebar-dropdown">
+							<a href="#">
+								<i class="fa fa-heart"></i>
+								<span>Follower</span>
+								<span id="follower_list_size" class="badge badge-pill badge-danger"></span>
+							</a>
+							<div class="sidebar-submenu">
+								<ul id="follower_list_container">
+								</ul>
+							</div>
+						</li>
+					</ul>
+				</div>
+				
+			</div>	
+   			
+   		</div>			
+    	
+	</nav>
 	
 </body>
 
@@ -292,7 +273,6 @@
 			// 소켓으로부터 메시지 도착 시 (메시지의 attribute 이름에 따라 이벤트를 구분)
 	        ws.onmessage=function(e) {
 				
-	    		console.log('message', e.data);
 	    		var message = JSON.parse(e.data);
             	
 	    		if (message.type == 'chat_send') { // 접속자의 메시지가 도착함 
@@ -352,23 +332,24 @@
 		function fillMyGroupChannelList(data) {
 			$.each(data, function(index, item) {
 				var div = null; 
-				if ('${channel.channelcode}' == item.channelcode)
-					div = $("<div>").attr({"class":"my_channel bg-primary width-100 height-100 overflow-hidden", "data-channelcode":item.channelcode});
-				else
-					div = $("<div>").attr({"class":"my_channel width-100 height-100 overflow-hidden", "data-channelcode":item.channelcode, "onclick":"openChannel(" + item.channelcode + ");"});
+				if ('${channel.channelcode}' == item.channelcode) {
+					div = $("<div>").attr({"class":"my_channel bg-secondary width-100 height-100 p-2 overflow-hidden", "data-channelcode":item.channelcode, "style":"cursor:pointer;", "onclick":"openChannel(" + item.channelcode + ");"});
+				} else {
+					div = $("<div>").attr({"class":"my_channel width-100 height-100 p-2 overflow-hidden", "data-channelcode":item.channelcode, "style":"cursor:pointer;", "onclick":"openChannel(" + item.channelcode + ");"});
+				}
 				
 				var channel_name = $("<div>").attr({"class":"channel_name"});
 				var channel_img = $("<div>").attr({"class":"channel_img"});
 				
 				if (item.channelimgservername != null) {
 					
-					channel_img.append($("<img>").attr({"class":"width-100 height-100", "src":"/resources/images/groupchannelprofileupload/" + item.channelimgservername}))
+					channel_img.append($("<img>").attr({"class":"w-100 h-100", "src":"/resources/images/groupchannelprofileupload/" + item.channelimgservername}))
 					div.append(channel_img);
 
 				} else {
 					
-					channel_name.append($("<div>").attr({"style":"color: white;"}).text(item.channelname.charAt(0).toUpperCase()));
-					div.append(channel_name);
+					channel_img.append($("<img>").attr({"class":"w-100 h-100", "src":"/resources/images/groupchannelprofileupload/default.png"}));
+					div.append(channel_img);
 					
 				}
 					
@@ -405,22 +386,23 @@
 			$.each(data, function(index, item) {
 				
 				var div = null; 
-				if ('${channel.channelcode}' == item.channelcode)
-					div = $("<div>").attr({"class":"follow_channel bg-primary width-100 height-100 overflow-hidden", "data-channelcode":item.channelcode});
-				else
-					div = $("<div>").attr({"class":"follow_channel width-100 height-100 overflow-hidden", "data-channelcode":item.channelcode, "onclick":"openChannel(" + item.channelcode + ");"});
+				if ('${channel.channelcode}' == item.channelcode) {
+					div = $("<div>").attr({"class":"follow_channel bg-secondary width-100 height-100 p-2 overflow-hidden", "style":"cursor:pointer;", "data-channelcode":item.channelcode, "onclick":"openChannel(" + item.channelcode + ");"});
+				} else {
+					div = $("<div>").attr({"class":"follow_channel width-100 height-100 p-2 overflow-hidden", "data-channelcode":item.channelcode, "style":"cursor:pointer;", "onclick":"openChannel(" + item.channelcode + ");"});
+				}
 				
 				var channel_name = $("<div>").attr({"class":"channel_name"});
 				var channel_img = $("<div>").attr({"class":"channel_img"});
 				
 				if (item.channelimgservername != null) {
 					
-					channel_img.append($("<img>").attr({"class":"width-100 height-100", "src":"/resources/images/groupchannelprofileupload/" + item.channelimgservername}))
+					channel_img.append($("<img>").attr({"class":"w-100 h-100", "src":"/resources/images/groupchannelprofileupload/" + item.channelimgservername}))
 					div.append(channel_img);
 
 				} else {
 					
-					channel_name.append($("<div>").attr({"style":"color: white;"}).text(item.channelname.charAt(0).toUpperCase()));
+					channel_img.append($("<img>").attr({"class":"w-100 h-100", "src":"/resources/images/groupchannelprofileupload/default.png"}));
 					div.append(channel_name);
 					
 				}
@@ -435,8 +417,6 @@
 	<script type="text/javascript">
 		function findGroupChannelChatRoomList() {
 			
-			console.log("findGroupChannelChatRoomList (CHANNELCODE) >> ", '${channel.channelcode}');
-			
 			$.ajax({
 				type: "post",
 				url: "/chat/findGroupChannelChatRoomList",
@@ -447,7 +427,6 @@
 				dataType: "json",
 				
 				success: function(data){
-					console.log("findGroupChannelChatRoomList >> ", data);
 					$("#chat_room_ul").empty();
 					fillChatRoomList(data);
 				},
@@ -468,7 +447,7 @@
 			
 			$.each(data, function(index, item) {
 				
-				var chat_list = $("<li>").attr({"class":"chat_list", "data-roomcode":item.room_code, "onclick":"openChatRoom(" + item.room_code + ");"});
+				var chat_list = $("<li>").attr({"class":"chat_list", "data-roomcode":item.room_code, "style":"cursor:pointer;", "onclick":"openChatRoom(" + item.room_code + ");"});
 				var chat_room_name = $("<a>").attr({"class":"chat_room_name"}).text(item.room_name);
 				var chat_people = $("<div>").attr({"class":"chat_people"});
 				var chat_ib = $("<div>").attr({"class":"chat_ib"});
@@ -490,7 +469,7 @@
 					
 					chat_ib
 						.append($("<h5>").text(recent_message_member_id))
-						.append($("<p>").text(item.message)
+						.append($("<p>").attr({"style":"color:#b8bfce; padding: 5px;"}).text(item.message)
 								.append($("<span>").attr({"class":"chat_date float-right"}).text(getElapsedTime(item.message_date)))
 								);
 				}
@@ -499,7 +478,7 @@
 			})
 		}
 		
-		function getElapsedTime(recent_date){
+		function getElapsedTime(recent_date) {
 			var recent_year = recent_date.substr(0, 4);
 			var recent_month = recent_date.substr(6, 2) - 1;
 			var recent_day = recent_date.substr(10, 2);
@@ -635,7 +614,7 @@
 			
 			$.each(data, function(index, item) {
 				
-				var chat_list = $("<li>").attr({"class":"rtc_list", "data-roomcode":item.room_code, "onclick":"openRtcRoom(" + item.room_code + ");"});
+				var chat_list = $("<li>").attr({"class":"rtc_list", "data-roomcode":item.room_code, "style":"cursor: pointer;", "onclick":"openRtcRoom(" + item.room_code + ");"});
 				var chat_room_name = $("<a>").attr({"class":"rtc_room_name"}).text(item.room_name);
 					
 				$("#rtc_room_ul").append(chat_list.append(chat_room_name));
@@ -786,8 +765,6 @@
 				dataType: "json",
 				
 				success: function(data) {
-					console.log(">>> FollowerList");
-					console.log(data);
 					$("#follower_list_container").empty();
 					fillReaderList(data);
 				},
@@ -816,7 +793,7 @@
 								.append($("<span>").attr({"class":"name mx-1"}).text(item.membername))
 								.append($("<span>").attr({"class":"id mx-1"}).text(item.memberid))
 								.append($("<span>").attr({"class":"email mx-1"}).text(item.memberemail))
-								.append($("<button>").attr({"class":"change_role mx-1", "onclick":"changeFollowerRole(" + item.membercode + ");"}).text("upgrade"));
+								.append($("<button>").attr({"class":"change_role mx-1 btn btn-secondary btn-sm", "onclick":"changeFollowerRole(" + item.membercode + ");"}).text("upgrade"));
 				
 				// 채널 editor online 여부 표시
 				var isOnline = false;

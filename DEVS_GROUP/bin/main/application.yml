@@ -4,12 +4,12 @@ server:
     context-path: /
     
   # ssl
-  ssl:
-    enabled: true
-    key-store: /etc/letsencrypt/live/www.devsgroup.ml/keystore.p12
-    key-store-password: 
-    key-store-type: PKCS12
-    key-alias: tomcat
+#  ssl:
+#    enabled: true
+#    key-store: /etc/letsencrypt/live/www.devsgroup.ml/keystore.p12
+#    key-store-password: 
+#    key-store-type: PKCS12
+#    key-alias: tomcat
     
     
 ssoDomain: www.devssso.ml
