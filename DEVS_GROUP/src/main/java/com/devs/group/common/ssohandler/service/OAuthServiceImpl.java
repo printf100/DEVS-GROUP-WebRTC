@@ -71,10 +71,10 @@ public class OAuthServiceImpl implements OAuthService {
 	private String getOAuthRedirectUri() {
 
 		// 로컬 테스트용
-//		return "http://" + CLIENT_DOMAIN + ":" + SERVER_PORT + "/ssoclient/oauthCallback";
+		return "http://" + CLIENT_DOMAIN + ":" + SERVER_PORT + "/ssoclient/oauthCallback";
 
 		// 서버 배포용
-		return "https://" + CLIENT_DOMAIN + "/ssoclient/oauthCallback";
+//		return "https://" + CLIENT_DOMAIN + "/ssoclient/oauthCallback";
 	}
 
 	@Override

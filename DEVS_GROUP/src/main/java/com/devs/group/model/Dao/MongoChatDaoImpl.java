@@ -40,6 +40,8 @@ public class MongoChatDaoImpl implements MongoChatDao {
 	@Override
 	public ChatVo insertChatRoom(ChatVo newRoom) {
 		newRoom.setRoom_code((int) seqGenerator.getNextSequenceId(newRoom.ROOM_CODE_SEQ_NAME));
+		newRoom.setChat_code((int) seqGenerator.getNextSequenceId(newRoom.CHAT_CODE_SEQ_NAME));
+		
 		return mongo.insert(newRoom, GROUP_COLLECTION_NAME);
 	}
 
@@ -87,16 +89,30 @@ public class MongoChatDaoImpl implements MongoChatDao {
 	}
 
 	@Override
-	public List<ChatVo> selectChatList(int room_code) {
+	public List<ChatVo> selectChatList(int room_code, int startNo) {
 
 		Query query = new Query();
-
 		Criteria criteria = new Criteria();
-		criteria.andOperator(Criteria.where("room_code").is(room_code), Criteria.where("chat_code").ne(0));
 
-		query.addCriteria(criteria).with(Sort.by(Sort.Direction.ASC, "chat_code"));
+		if (startNo == 0) {
+			// 채팅 불러오기 첫 시작일 경우 (일단 다 가져와서 내림차순 정렬 후 20개 리미트
+			criteria.andOperator(Criteria.where("room_code").is(room_code), Criteria.where("chat_code").ne(0));
+			query.addCriteria(criteria).with(Sort.by(Sort.Direction.DESC, "chat_code")).limit(20);
+		} else {
+			// 첫 시작이 아닐 경우 (
+			criteria.andOperator(Criteria.where("room_code").is(room_code), Criteria.where("chat_code").ne(0));
+			query.addCriteria(criteria).addCriteria(Criteria.where("chat_code").lt(startNo))
+					.with(Sort.by(Sort.Direction.DESC, "chat_code")).limit(20);
+		}
 
 		return mongo.find(query, ChatVo.class, GROUP_COLLECTION_NAME);
+	}
+
+	@Override
+	public ChatVo selectOneChatRoom(int room_code) {
+		Query query = new Query(Criteria.where("room_code").is(room_code));
+
+		return mongo.findOne(query, ChatVo.class, GROUP_COLLECTION_NAME);
 	}
 
 	@Override

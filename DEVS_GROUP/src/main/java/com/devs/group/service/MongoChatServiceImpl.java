@@ -18,7 +18,7 @@ public class MongoChatServiceImpl implements MongoChatService {
 	/*
 	 * Chatting
 	 */
-	
+
 	@Override
 	public ChatVo insertChatRoom(ChatVo newRoom) {
 		return dao.insertChatRoom(newRoom);
@@ -40,8 +40,13 @@ public class MongoChatServiceImpl implements MongoChatService {
 	}
 
 	@Override
-	public List<ChatVo> selectChatList(int room_code) {
-		return dao.selectChatList(room_code);
+	public List<ChatVo> selectChatList(int room_code, int startNo) {
+		return dao.selectChatList(room_code, startNo);
+	}
+
+	@Override
+	public ChatVo selectOneChatRoom(int room_code) {
+		return dao.selectOneChatRoom(room_code);
 	}
 
 	@Override
@@ -52,7 +57,7 @@ public class MongoChatServiceImpl implements MongoChatService {
 	/*
 	 * WebRTC
 	 */
-	
+
 	@Override
 	public RtcVo insertRtcRoom(RtcVo newRtcRoom) {
 		return dao.insertRtcRoom(newRtcRoom);

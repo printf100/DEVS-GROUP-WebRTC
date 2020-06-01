@@ -1,15 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
     pageEncoding="UTF-8"%>
+
+<!-- START :: HEADER IMPORT -->
+<%@ include file="form/header.jsp"%>
+<!-- END :: HEADER IMPORT -->
+
 <!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Insert title here</title>
-
-<!-- START :: HEADER FORM -->
-<%@ include file="form/header.jsp"%>
-<!-- END :: HEADER FORM -->
 
 <!-- START :: CSS -->
 <!-- <link href="resources/css/master.css" rel="stylesheet" type="text/css"> -->
@@ -19,18 +20,18 @@
 
 <!-- START :: JAVASCRIPT -->
 	<script type="text/javascript">
-		$(function(){
+		$(function() {
 			
-			$("#channel_image").click(function(){
+			$("#channel_image").click(function() {
 				// 채널주인만 수정 가능
-				if('${channel.membercode}' != '${loginMember.membercode}'){
+				if('${channel.membercode}' != '${loginMember.membercode}') {
 					return false;
 				}
 				
 				$("input[name='channelimgoriginalname']").click();
-			})
+			});
 			
-			$("input[name='channelimgoriginalname']").change(function(e){
+			$("input[name='channelimgoriginalname']").change(function(e) {
 				var form = $("#imageForm")[0];
 				var formData = new FormData(form);
 				
@@ -42,17 +43,17 @@
 					contentType: false,
 					data: formData,
 					dataType: "JSON",
-					success: function(msg){
+					success: function(msg) {
 						$("#channel_image").attr("src","/resources/images/groupchannelprofileupload/" + msg.img);
 						/* notifyProfileImgChange(msg.img); */
 					},
 					error : function() {
 						alert("통신 실패");
 					}
-				})				
-			})
+				});				
+			});
 			
-		})
+		});
 	</script>
 <!-- END :: JAVASCRIPT -->
 

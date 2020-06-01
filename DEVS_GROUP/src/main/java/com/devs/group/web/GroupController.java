@@ -3,8 +3,11 @@ package com.devs.group.web;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -22,7 +25,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
@@ -31,6 +33,8 @@ import com.devs.group.common.ssohandler.domain.entity.Member;
 import com.devs.group.common.ssohandler.domain.entity.MemberProfile;
 import com.devs.group.common.ssohandler.service.MemberService;
 import com.devs.group.model.entity.GroupChannel;
+import com.devs.group.model.entity.GroupChannelBoard;
+import com.devs.group.model.repository.GroupChannelBoardRepository;
 import com.devs.group.model.vo.MemberJoinProfileSimpleVo;
 import com.devs.group.service.GroupChannelService;
 import com.devs.group.service.SideBarService;
@@ -49,6 +53,9 @@ public class GroupController {
 
 	@Autowired
 	private GroupChannelService groupChannelService;
+
+	@Autowired
+	private GroupChannelBoardRepository groupChannelBoardRepository;
 
 	@Value("${server.port}")
 	private int SERVER_PORT;
@@ -210,7 +217,7 @@ public class GroupController {
 	public ModelAndView channelMainPage(HttpSession session, @RequestParam("channelcode") int channelcode) {
 
 		logger.info("{}번 채널 눌렀따", channelcode);
-		
+
 		session.setAttribute("channel", sideBarService.selectChannel(channelcode));
 		session.setAttribute("follow",
 				sideBarService.selectGroupFollow(channelcode, ((Member) session.getAttribute("user")).getMembercode()));
@@ -229,7 +236,7 @@ public class GroupController {
 
 		System.out.println("채널 생성 : " + savedGroupChannel);
 
-		return new ModelAndView("redirect:/?channelcode=" + savedGroupChannel.getChannelcode());
+		return new ModelAndView("redirect:/group/channel?channelcode=" + savedGroupChannel.getChannelcode());
 	}
 
 	/*
@@ -245,7 +252,40 @@ public class GroupController {
 				newGroupChannel);
 		session.setAttribute("channel", changedGroupChannel);
 
-		return new ModelAndView("redirect:/group/channel");
+		GroupChannelBoard beforeGroupChannelBoard = groupChannelBoardRepository.findByChannelcode(channelcode);
+		GroupChannelBoard insertedGroupChannelBoard = null;
+		if (beforeGroupChannelBoard != null) {
+
+			// 채널 소개 BOARD 테이블에 update
+			beforeGroupChannelBoard.setMembercode(changedGroupChannel.getMembercode());
+			beforeGroupChannelBoard.setChannelcode(changedGroupChannel.getChannelcode());
+			beforeGroupChannelBoard.setBoardcontent(changedGroupChannel.getChannelintroduce());
+			beforeGroupChannelBoard.setBoardregdate(new Date());
+			System.out.println("채널 소개를 BOARD에 insert!" + beforeGroupChannelBoard);
+
+			insertedGroupChannelBoard = groupChannelBoardRepository.save(beforeGroupChannelBoard);
+
+		} else {
+
+			// 채널 소개 BOARD 테이블에 insert
+			GroupChannelBoard groupChannelBoard = new GroupChannelBoard();
+			groupChannelBoard.setMembercode(changedGroupChannel.getMembercode());
+			groupChannelBoard.setChannelcode(changedGroupChannel.getChannelcode());
+			groupChannelBoard.setBoardcontent(changedGroupChannel.getChannelintroduce());
+			groupChannelBoard.setBoardregdate(new Date());
+			System.out.println("채널 소개를 BOARD에 insert!" + groupChannelBoard);
+
+			insertedGroupChannelBoard = groupChannelBoardRepository.save(groupChannelBoard);
+
+		}
+
+		System.out.println("-------------------------------- insertedGroupChannelBoard");
+		System.out.println("-------------------------------- insertedGroupChannelBoard");
+		System.out.println(insertedGroupChannelBoard);
+		System.out.println("-------------------------------- insertedGroupChannelBoard");
+		System.out.println("-------------------------------- insertedGroupChannelBoard");
+
+		return new ModelAndView("redirect:/group/channel?channelcode=" + channelcode);
 	}
 
 	/*
@@ -335,5 +375,19 @@ public class GroupController {
 		int channelcode = map.get("channelcode");
 
 		return sideBarService.selectFollowerRoleReader(channelcode);
+	}
+
+	@PostMapping("changeFollowerRole")
+	public Map<String, Boolean> changeFollowerRole(@RequestBody Map<String, Integer> map) {
+
+		int membercode = map.get("membercode");
+		int channelcode = map.get("channelcode");
+
+		sideBarService.changeFollowerRole(membercode, channelcode);
+
+		Map<String, Boolean> resultMap = new HashMap<String, Boolean>();
+		resultMap.put("res", true);
+
+		return resultMap;
 	}
 }

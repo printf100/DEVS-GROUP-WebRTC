@@ -21,4 +21,6 @@ public interface SideBarService {
 	public List<MemberJoinProfileSimpleVo> selectFollowerRoleEditor(int channelcode);
 
 	public List<MemberJoinProfileSimpleVo> selectFollowerRoleReader(int channelcode);
+
+	public void changeFollowerRole(int membercode, int channelcode);
 }

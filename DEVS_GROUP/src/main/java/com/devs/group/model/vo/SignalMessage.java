@@ -14,6 +14,7 @@ public class SignalMessage {
 	private String type;
 	private String toId;
 	private String fromId;
+	private String fromProfileImageName;
 	private List<String> loginIds;
 	private Object data;
 }

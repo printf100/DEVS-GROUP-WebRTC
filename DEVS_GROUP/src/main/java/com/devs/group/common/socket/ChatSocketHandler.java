@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.slf4j.Logger;
@@ -19,6 +20,8 @@ import org.springframework.web.socket.handler.TextWebSocketHandler;
 
 import com.devs.group.common.ssohandler.domain.entity.Member;
 import com.devs.group.common.ssohandler.domain.entity.MemberProfile;
+import com.devs.group.common.ssohandler.service.MemberService;
+import com.devs.group.model.entity.GroupChannel;
 import com.devs.group.model.vo.ChatVo;
 import com.devs.group.model.vo.MemberJoinProfileSimpleVo;
 import com.devs.group.model.vo.SignalMessage;
@@ -33,11 +36,15 @@ public class ChatSocketHandler extends TextWebSocketHandler {
 	@Autowired
 	private MongoChatService mongoChatService;
 
+	@Autowired
+	private MemberService memberService;
+
 	private ObjectMapper objectMapper = new ObjectMapper();
 
 	private static final String CHAT_ENTER_TYPE = "chat_enter";
 	private static final String CHAT_SEND_TYPE = "chat_send";
 	private static final String CHAT_OUT_TYPE = "chat_out";
+	private static final String CHAT_INVITE_TYPE = "chat_invite";
 
 	private Map<WebSocketSession, Integer> sessionMap = new HashMap<>(); // <세션, 채팅방번호>
 
@@ -57,6 +64,8 @@ public class ChatSocketHandler extends TextWebSocketHandler {
 			sendChatEnterMessage(session, signalMessage);
 		} else if (CHAT_SEND_TYPE.equalsIgnoreCase(signalMessage.getType())) {
 			sendChatMessage(session, signalMessage);
+		} else if (CHAT_INVITE_TYPE.equalsIgnoreCase(signalMessage.getType())) {
+			chatInviteProcess(session, signalMessage);
 		} else if (CHAT_OUT_TYPE.equalsIgnoreCase(signalMessage.getType())) {
 			sessionMap.put(session, -1);
 		}
@@ -103,20 +112,20 @@ public class ChatSocketHandler extends TextWebSocketHandler {
 			}
 		}
 
-		System.out.println("거의다왔다,,,");
-
 	}
 
 	// 채팅 메시지 보내기
 	private void sendChatMessage(WebSocketSession session, SignalMessage signalMessage) throws IOException {
-		Member enterMember = (Member) session.getAttributes().get("user");
+
+		Member sender = (Member) session.getAttributes().get("user");
 		HashMap<String, Object> signalMessageMap = (HashMap<String, Object>) signalMessage.getData();
 
-		int member_code = enterMember.getMembercode();
+		int member_code = sender.getMembercode();
+		String member_id = sender.getMemberid();
 		int room_code = Integer.parseInt((String) signalMessageMap.get("room_code"));
 		String chat_message = (String) signalMessageMap.get("message");
 
-		System.out.println((room_code + "방, " + session.getId() + ", " + member_code + "로 부터 " + chat_message + " 받음"));
+		System.out.println((room_code + "방, " + session.getId() + ", " + member_id + "로 부터 " + chat_message + " 받음"));
 
 		// 가장 최근 채팅 document를 통해 현재 채팅방에 참여중인 사람들의 정보를 추출
 		ChatVo recentChat = mongoChatService.findRecentChat(room_code);
@@ -137,6 +146,91 @@ public class ChatSocketHandler extends TextWebSocketHandler {
 		// MongoDB에 insert
 		ChatVo newChat = new ChatVo();
 
+		newChat.setChannel_code(((GroupChannel) session.getAttributes().get("channel")).getChannelcode());
+		newChat.setRoom_name(mongoChatService.selectOneChatRoom(room_code).getRoom_name());
+		newChat.setRoom_code(room_code);
+		newChat.setMember_list(recentChat.getMember_list());
+		newChat.setMember_code(member_code);
+		newChat.setMember_id(member_id);
+
+		newChat.setUnread_member_code_list(unread_member_code_list); // 현재는 모두가 읽지않은 상태!
+
+		newChat.setMessage(chat_message);
+		newChat.setMessage_date(new SimpleDateFormat("yyyy년 MM월 dd일 HH:mm", Locale.KOREA).format(new Date()));
+
+		// 소켓통신 이용하여 채팅방에 전송
+		for (WebSocketSession sess : sessionMap.keySet()) {
+			for (MemberJoinProfileSimpleVo room_member : newChat.getMember_list()) {
+
+				// 채팅방에 참여중인 멤버코드리스트 와 접속중인 멤버코드들 중 일치하는 코드가 있다면 메시지 보냄
+				if (room_member.getMembercode() == ((Member) sess.getAttributes().get("user")).getMembercode()) {
+
+					SignalMessage out = new SignalMessage();
+
+					out.setType(CHAT_SEND_TYPE);
+
+					Map<String, Object> map = new HashMap<>();
+					map.put("writer_img",
+							((MemberProfile) session.getAttributes().get("profile")).getMemberImgServerName());
+					map.put("new_chat", newChat);
+					out.setData(map);
+
+					String stringifiedJSONmsg = objectMapper.writeValueAsString(out);
+
+					sess.sendMessage(new TextMessage(stringifiedJSONmsg));
+				}
+			}
+		}
+
+		ChatVo insertedChat = mongoChatService.insertChat(newChat);
+	}
+
+	// 채팅 초대 메시지 보내기
+	private void chatInviteProcess(WebSocketSession session, SignalMessage signalMessage) throws IOException {
+		Member enterMember = (Member) session.getAttributes().get("user");
+		HashMap<String, Object> signalMessageMap = (HashMap<String, Object>) signalMessage.getData();
+
+		int member_code = enterMember.getMembercode();
+		int invited_member_code = (Integer) signalMessageMap.get("invited_member_code");
+		int room_code = (Integer) signalMessageMap.get("room_code");
+		MemberJoinProfileSimpleVo invitedMember = null;
+
+		List<Integer> invitedMemberCodeNotList = new ArrayList<>();
+		invitedMemberCodeNotList.add(invited_member_code);
+		List<MemberJoinProfileSimpleVo> invitedMemberList = memberService.selectMemberList(invitedMemberCodeNotList);
+		for (MemberJoinProfileSimpleVo invited : invitedMemberList) {
+			invitedMember = invited;
+		}
+
+		String chat_message = invitedMember.getMemberid() + " 님이 초대되었습니다.";
+		///////////////////////////////////////////////////////// 변수 셋팅
+		/////////////////////////////////////////////////////////
+
+		System.out.println(chat_message);
+
+		// 가장 최근 채팅 document를 통해 현재 채팅방에 참여중인 사람들의 정보를 추출 + 초대된 멤버도 추가
+		ChatVo recentChat = mongoChatService.findRecentChat(room_code);
+		recentChat.getMember_list().add(invitedMember); // 초대된 멤버 코드도 추가
+
+		// 채팅방에 포함된 사람들의 멤버코드리스트
+		List<Integer> unread_member_code_list = new ArrayList<>();
+		for (MemberJoinProfileSimpleVo chat_member : recentChat.getMember_list()) {
+			unread_member_code_list.add(chat_member.getMembercode());
+		}
+
+		// 현재 채팅방에 접속중인 사람은 unread에서 지운다.
+		for (WebSocketSession sess : sessionMap.keySet()) {
+			if (sessionMap.get(sess) == room_code) {
+				unread_member_code_list.remove((Integer) ((Member) sess.getAttributes().get("user")).getMembercode());
+			}
+		}
+
+		// MongoDB에 insert
+		ChatVo newChat = new ChatVo();
+
+		newChat.setChat_type("invite");
+		newChat.setChannel_code(((GroupChannel) session.getAttributes().get("channel")).getChannelcode());
+		newChat.setRoom_name(mongoChatService.selectOneChatRoom(room_code).getRoom_name());
 		newChat.setRoom_code(room_code);
 		newChat.setMember_list(recentChat.getMember_list());
 		newChat.setMember_code(member_code);

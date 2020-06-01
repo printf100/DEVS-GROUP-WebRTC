@@ -139,4 +139,13 @@ public class SideBarServiceImpl implements SideBarService {
 		return memberJoinProfileSimpleVoList;
 	}
 
+	@Override
+	public void changeFollowerRole(int membercode, int channelcode) {
+		GroupFollow groupFollow = groupFollowRepository.findByChannelcodeAndMembercode(channelcode, membercode);
+
+		groupFollow.setFollowerrole(FOLLOW_EDITOR_ROLE);
+
+		groupFollowRepository.save(groupFollow);
+	}
+
 }

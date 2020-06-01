@@ -30,7 +30,7 @@ public class RtcController {
 	@Autowired
 	private MongoChatService mongoChatService;
 
-	// 채팅방 리스트 가져오기
+	// 화상채팅방 리스트 가져오기
 	@PostMapping(value = "findGroupChannelRtcRoomList")
 	public List<RtcVo> findMyChatRoomList(@RequestBody Map<String, Integer> map) {
 		logger.info("rtc/findGroupChannelRtcRoomList.POST");
@@ -45,7 +45,7 @@ public class RtcController {
 		return list;
 	}
 
-	// 채팅방 입장
+	// 화상채팅방 입장
 	@GetMapping(value = "rtcroom")
 	public ModelAndView enterChatroom(HttpSession session, int room_code) {
 		logger.info("rtc/rtcroom.GET");
@@ -56,15 +56,15 @@ public class RtcController {
 		return new ModelAndView("webrtc");
 	}
 
-	// 채팅방 만들기
+	// 화상채팅방 만들기
 	@PostMapping(value = "makeRtcRoom")
-	public Map<String, Object> makeChatRoom(HttpSession session, String room_name) {
+	public Map<String, Object> makeChatRoom(HttpSession session, @RequestBody Map<String, String> map) {
 		logger.info("rtc/makeRtcRoom.POST");
 
 		RtcVo newRtcRoom = new RtcVo();
 
 		newRtcRoom.setChannel_code(((GroupChannel) session.getAttribute("channel")).getChannelcode());
-		newRtcRoom.setRoom_name(room_name);
+		newRtcRoom.setRoom_name(map.get("room_name"));
 
 		RtcVo insertedRtcRoom = mongoChatService.insertRtcRoom(newRtcRoom);
 

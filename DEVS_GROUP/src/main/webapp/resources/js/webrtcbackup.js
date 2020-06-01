@@ -38,8 +38,11 @@ var configuration = {
 
 var peer;
 var memberId; // 내 멤버 아이디
+var head; // 방장 (방에 처음 입장한 사람)
 
+var clientList = [];
 var connections = [];
+var screenConnections = [];
 
 var room_code; // 화상채팅 방번호
 
@@ -75,12 +78,20 @@ function connect(memberid) {
 		if (message.type == 'enter') {
 			// enter 메시지를 받은 모든 client들은 startRTC( 1. offer(peer), 2. ice/addStream )
 
-			var clientList = message.loginIds; // enter 메세지를 받은 모든 사람은 최신화된 connections 배열을 가질 수 있다.
+			clientList = message.loginIds; // enter 메세지를 받은 모든 사람은 최신화된 connections 배열을 가질 수 있다.
 			console.log("clientList 배열 : " + clientList);
 
+			// 방장만 화면공유할 수 있도록 버튼 셋팅
+			if(clientList.length == 1) {
+				head = message.fromId;	// 방장 셋팅
+				console.log(head + "가 방장이라구~~~? 버튼 보여준다~~~");
+				$("#share_screen").show();
+			}
+			
 			if (message.fromId == memberId) { // 내가 들어왔어
 				
 				console.log("내가 들어왔음. peerConnection 시작!!");
+
 				
 				isFirstEnter = clientList.length-1;
 				clientList.forEach(function(client) {
@@ -144,6 +155,49 @@ function connect(memberid) {
 
 		}
 		
+		/*
+		 * 화면 공유
+		 */
+		else if(message.type == "screenSignal") {
+			
+			// 화면공유하겠다는 요청이 오면
+			if (message.data == "screenRequest") {
+				screenConnections[message.fromId] = new RTCPeerConnection(configuration);
+				startScreenPeerConnection(screenConnections[message.fromId], message.fromId);
+			}
+			
+			// SDP
+			if (message.data.sdp) {
+
+				// 상대 peer로부터 전달받은 SDP 셋팅
+				screenConnections[message.fromId].setRemoteDescription(new RTCSessionDescription(message.data.sdp), function() {
+					console.log("## setRemoteDescription", message.data.sdp);
+
+					if (screenConnections[message.fromId].remoteDescription.type == 'offer') {
+						peer = message.fromId;
+						console.log(peer + "로부터 screen offer SDP 받았어");
+
+						// answer SDP를 생성해 상대 peer에게 전달
+						console.log("## createAnswer : 그래서 " + peer + "한테 screen answer SDP 줄거야~~~");
+						screenConnections[message.fromId].createAnswer(localDescCreatedScreen, logError);
+						
+					} else { // 'answer' 라면
+						console.log(message.fromId + "로부터 screen answer SDP 도착");
+						
+					}
+				}, // 성공적으로 수행되면, 각 브라우저에서 서로에 대해 인지하고 있는 상태가 된것, p2p 연결이 성공적으로 완료된 것!
+				logError);
+			}
+
+			// ICE Candidate
+			else {
+		    	console.log("## addIceCandidate : " + message.fromId + " 한테 screen candidate 받아서 셋팅 !!!!!!!!!!!!", message.data.candidate);
+				
+		    	// 도착한 상대 peer의 네트워크 정보 등록
+		    	screenConnections[message.fromId].addIceCandidate(new RTCIceCandidate(message.data.candidate));
+			}
+		}
+		
 		else if (message.type == "disconnect") {
 			console.log(message.fromId, " 연결 종료함");
 			
@@ -167,23 +221,29 @@ function connect(memberid) {
 function startPeerConnection(connection, toId) {
 	console.log(memberId + "가 " + toId + " 와 peer Connection 시작 !!!!!!!!!!!!!!!!!");
 
-	// 자신의 미디어를 셋팅 (signaling을 통해 connection이 이루어지기 전에 미리 자신의 video/audio 스트림 취득)
-	navigator.getUserMedia({
-		'audio' : true,
-		'video' : true
-	}, function(stream) { // 성공 시
-		console.log("## getUserMedia 내 화면 입력 ", stream);
-		myVideo.srcObject = stream;
-		connection.addStream(stream); // 미디어 스트림 입력
+	if(navigator.getUserMedia) {
 		
-		// 처음 들어온 사람이 offer를 시작할수 있는 첫 시점
-		if(isFirstEnter > 0){
-			console.log("나는 처음 들어온 사람이야 내 화면 셋팅됐으니까 모두에게 offer 보낼거야~~");
-			offer(toId);
-			isFirstEnter--;
-		}
-		
-	}, logError);
+		// 자신의 미디어를 셋팅 (signaling을 통해 connection이 이루어지기 전에 미리 자신의 video/audio 스트림 취득)
+		navigator.getUserMedia({
+			'audio' : true,
+			'video' : true
+		}, function(stream) { // 성공 시
+			console.log("## getUserMedia 내 화면 입력 ", stream);
+			myVideo.srcObject = stream;
+			connection.addStream(stream); // 미디어 스트림 입력
+			
+			// 처음 들어온 사람이 offer를 시작할수 있는 첫 시점
+			if(isFirstEnter > 0){
+				console.log("나는 처음 들어온 사람이야 내 화면 셋팅됐으니까 모두에게 offer 보낼거야~~");
+				offer(toId);
+				isFirstEnter--;
+			}
+			
+		}, logError);
+				
+	} else {
+		alert("해당 브라우저는 화상채팅이 지원되지 않습니다.");
+	}
 	
 	// onicecandidate : 내 네트워크 정보가 확보되면 실행될 callback 셋팅
 	connection.onicecandidate = function(evt) {
@@ -243,6 +303,115 @@ function localDescCreated(desc) {
 	}, logError);
 
 };
+
+
+/////////////////////////////////////////////////////화면 공유 ////////////////////////////////////////////////////////
+function screenSharing() {
+	
+	console.log("버튼 눌렀따");
+	
+	startCapture();
+	
+}
+
+async function startCapture() {
+	
+	console.log("start screen sharing!!!!");
+	
+	var displayMediaOptions = {
+			  video: {
+			    cursor: "always"
+			  },
+			  audio: false
+	};
+
+	try {
+		console.log("츄라이~~~");
+		
+		let screenStream = await navigator.mediaDevices.getDisplayMedia(displayMediaOptions);
+		myScreenCapture.srcObject = screenStream;
+		
+		for(var i=0; i<clientList.length; i++) {
+			if(clientList[i] != memberId) {
+				console.log(clientList[i], "랑 다시 start한다~~~~");
+				
+				sendMessage({
+					type: "screenSignal",
+					toId: clientList[i],
+					data: "screenRequest"
+				});
+				
+				screenConnections[clientList[i]] = new RTCPeerConnection(configuration);
+				startScreenPeerConnection(screenConnections[clientList[i]], clientList[i]);
+				
+				screenOffer(clientList[i]);
+			}
+		}
+	} catch(err) {
+		console.error("Error: " + err);
+	}
+}
+
+function startScreenPeerConnection(screenConnection, toId) {
+	
+	// onicecandidate : 내 네트워크 정보가 확보되면 실행될 callback 셋팅
+	screenConnection.onicecandidate = function(evt) {
+
+		// signaling server를 통해 상대 peer에게 전송
+		if (evt.candidate) {
+			console.log("## onicecandidate", evt.candidate);
+			sendMessage({
+				type : "screenSignal",
+				toId : toId,
+				data : { 'candidate' : evt.candidate }
+			});
+		}
+	};
+	
+	// 원격 스트림이 도착하면 remoteView에 화면 뿌려주기
+	screenConnection.onaddstream = function(evt) {
+		console.log("#### onaddstream 상대방 화면 셋팅", evt);
+		
+		const newVideo = document.createElement('video');
+		newVideo.setAttribute('data-socket', toId);
+		newVideo.srcObject = evt.stream;
+		newVideo.autoplay = true;
+		newVideo.muted = false;
+		newVideo.playsinline = true;
+		
+		$("#videos").append(newVideo);
+	};
+}
+
+function screenOffer(toId) {
+	peer = toId;
+	
+	console.log("## createOffer : " + peer + "한테 screen offer SDP 보낼거야~~~~");
+	screenConnections[peer].createOffer(
+			localDescCreatedScreen,
+			logError
+	);
+}
+
+function localDescCreatedScreen(desc) {
+
+	console.log("## localDescCreated 진입 ");
+
+	// 생성된 SDP를 로컬 SDP로 설정
+	screenConnections[peer].setLocalDescription(desc, function() {
+		console.log("## setLocalDescription : 내 screen SDP를 로컬에 셋팅하고 " + peer + "한테 보낼거야~~", desc);
+		
+		// 상대 peer에게 SDP 전송
+		sendMessage({
+			type : "screenSignal",
+			toId : peer,
+			data : {	'sdp' : screenConnections[peer].localDescription }
+		});
+	}, logError);
+
+};
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function sendMessage(payload) {
 	sock.send(JSON.stringify(payload));

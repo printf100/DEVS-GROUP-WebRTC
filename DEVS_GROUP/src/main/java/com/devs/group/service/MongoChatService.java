@@ -10,7 +10,7 @@ public interface MongoChatService {
 	/*
 	 * Chatting
 	 */
-	
+
 	public ChatVo insertChatRoom(ChatVo newRoom);
 
 	public List<ChatVo> findGroupChanelChatRoomList(int channelcode);
@@ -19,10 +19,12 @@ public interface MongoChatService {
 
 	public ChatVo insertChat(ChatVo newChat);
 
-	public List<ChatVo> selectChatList(int room_code);
+	public List<ChatVo> selectChatList(int room_code, int startNo);
+
+	public ChatVo selectOneChatRoom(int room_code);
 
 	public void removeUnreadMemberCodeList(int room_code, int member_code);
-	
+
 	/*
 	 * WebRTC
 	 */
@@ -30,8 +32,8 @@ public interface MongoChatService {
 	public RtcVo insertRtcRoom(RtcVo newRtcRoom);
 
 	public List<RtcVo> selectRtcList(int channel_code);
-	
+
 	public RtcVo selectOneRtcRoom(int room_code);
-	
+
 	public int deleteRtcRoom(int room_code);
 }

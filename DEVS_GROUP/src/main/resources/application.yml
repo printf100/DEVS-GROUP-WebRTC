@@ -1,5 +1,5 @@
 server:
-  port: 80
+  port: 8989
   servlet:
     context-path: /
     
@@ -17,17 +17,17 @@ ssoServerPort: 80
 
 
 # 서버 배포용    
-clientDomain: www.devsgroup.ml
-systemName: DEVS_GROUP
-clientSocketProtocol: wss
-clientProtocol: https
+#clientDomain: www.devsgroup.ml
+#systemName: DEVS_GROUP
+#clientSocketProtocol: wss
+#clientProtocol: https
 
 
 # 로컬 테스트용
-#clientDomain: localhost
-#systemName: GROUP_TEMP
-#clientSocketProtocol: ws
-#clientProtocol: http
+clientDomain: localhost
+systemName: GROUP_TEMP
+clientSocketProtocol: ws
+clientProtocol: http
 
   
 spring:  

@@ -64,6 +64,9 @@ img{ max-width:100%;}
   display: inline-block;
   width: 6%;
 }
+.invite_msg{
+   text-align: center;
+}
 .received_msg {
   display: inline-block;
   padding: 0 0 0 10px;
@@ -89,7 +92,7 @@ img{ max-width:100%;}
 .mesgs {
   float: left;
   padding: 30px 15px 0 25px;
-  width: 60%;
+  width: 100%;
 }
 
  .sent_msg p {

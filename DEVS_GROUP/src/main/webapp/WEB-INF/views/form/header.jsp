@@ -46,6 +46,7 @@
 	
 	<c:set var="channel" value="${sessionScope.channel}"></c:set> <!-- 현재 채널 (채널주인 || 팔로우한사람만 접근가능)-->
 	<c:set var="follow" value="${sessionScope.follow}"></c:set> <!-- 현재 채널의 follow 상태(null || '' 이라면 방장) -->
+	<c:set var="chatRoomInfo" value="${sessionScope.chatRoomInfo}"></c:set> <!-- 입장한 채팅방의 정보 (ChatVo) -->
 <!-- END :: set JSTL variable -->
 
 <!-- START :: JAVASCRIPT -->
@@ -54,20 +55,23 @@
 	   
 	<script src='/resources/js/adapter-latest.js'></script>
 	<script src='/resources/js/chat_socket.js'></script>
+	<script src='/resources/js/alarm_socket.js'></script>
 	
 	<script type="text/javascript">
 		var SERVER_PORT = "${SERVER_PORT}";
 		var CLIENT_DOMAIN = "${CLIENT_DOMAIN}";
 		var CLIENT_SOCKET_PROTOCOL = "${CLIENT_SOCKET_PROTOCOL}";
 		var CLIENT_PROTOCOL = "${CLIENT_PROTOCOL}";
-
-		// rtc 소켓 연결
-		// var sock;
-		// connect("${loginMember.memberid}");
 		
-		// chatting 소켓 연결
 		var ws;
-		connectChatSocket();
+		$(function() {
+			// chatting 소켓 연결
+			connectChatSocket();
+
+			// alarm 소켓 연결
+			connectAlarmSocket();
+		});
+		
 	</script>
 <!-- END :: JAVASCRIPT -->
 
@@ -77,7 +81,7 @@
 		<nav class="navbar bg-white border">
 			<div class="d-flex justify-content-center mx-auto">
 				<!-- brand icon -->
-				<a class="navbar-brand mr-5" href="/group/"><h3>instagram</h3></a>				
+				<a class="navbar-brand mr-5" href="/group/"><h3>instagram</h3></a>		
 	
 				<!-- 검색창 -->
 				<form id="headerSearch" class="form-inline mx-5" action="/member/headerSearch" method="post">
