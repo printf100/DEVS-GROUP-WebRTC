@@ -23,4 +23,6 @@ public interface SideBarService {
 	public List<MemberJoinProfileSimpleVo> selectFollowerRoleReader(int channelcode);
 
 	public void changeFollowerRole(int membercode, int channelcode);
+
+	public void deleteGroupFollow(int membercode, int channelcode);
 }

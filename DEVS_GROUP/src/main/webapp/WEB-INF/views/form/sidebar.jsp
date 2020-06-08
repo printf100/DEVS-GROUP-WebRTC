@@ -76,6 +76,58 @@
 	</script>
 	<!-- END :: 그룹채널 프로필 이미지 수정 -->
 	
+	<!-- START :: 그룹 채널 팔로우/팔로우 취소하기 -->
+	<script type="text/javascript">
+		function followGroupChannel(channelcode) {
+			$.ajax({
+				type: "post",
+				url: "/group/followGroupChannel",
+				data: JSON.stringify({
+					membercode : '${loginMember.membercode}',
+					channelcode : channelcode
+				}),
+				contentType: "application/json",
+				dataType: "json",
+				
+				success: function(data) {
+					if(data) {
+						console.log("팔로우 성공");
+						$("#unfollowBtn").text("팔로잉");
+					}
+				},
+				
+				error: function(){
+					alert("통신실패");
+				}
+			});
+		}
+		
+		function unfollowGroupChannel(channelcode) {
+			$.ajax({
+				type: "post",
+				url: "/group/unfollowGroupChannel",
+				data: JSON.stringify({
+					membercode : '${loginMember.membercode}',
+					channelcode : channelcode
+				}),
+				contentType: "application/json",
+				dataType: "json",
+				
+				success: function(data) {
+					if(data) {
+						console.log("팔로우 취소 성공");
+						$("#followBtn").text("팔로우");
+					}
+				},
+				
+				error: function(){
+					alert("통신실패");
+				}
+			});
+		}
+	</script>
+	<!-- END :: 그룹 채널 팔로우하기 -->
+	
 <!-- END :: JAVASCRIPT -->
 
 </head>
@@ -107,6 +159,18 @@
      
 	      		<div class="sidebar-brand">
 		        	<a href="/group/channel?channelcode=${channel.channelcode}">${channel.channelname}</a>
+		        	<c:if test="${loginMember.membercode ne channel.membercode }">	<!-- 채널 주인이 아닐때만 버튼 출력 -->
+		        		<c:if test="${not empty follow }">
+				        	<c:choose>
+					        	<c:when test="${follow.membercode eq loginMember.membercode}"> <!-- 팔로우했을 때 -->
+						        	<button id="unfollowBtn" class="btn btn-secondary btn-sm">언팔로우</button>
+					        	</c:when>
+					        	<c:otherwise>
+						        	<button id="followBtn" class="btn btn-outline-secondary btn-sm" onclick="followGroupChannel(${channel.channelcode});">팔로우</button>
+					        	</c:otherwise>
+				        	</c:choose>
+		        		</c:if>
+		        	</c:if>
 		        	<div id="close-sidebar">
 		            	<i class="fas fa-times"></i>
 		        	</div>
@@ -317,8 +381,6 @@
 				dataType: "json",
 				
 				success: function(data){
-					console.log("myGroupChannel >>> ");
-					console.log(data);
 					$("#group-channel-container").empty();
 					fillMyGroupChannelList(data);
 				},
@@ -370,8 +432,6 @@
 				dataType: "json",
 				
 				success: function(data){
-					console.log("followGroupChannel >>> ");
-					console.log(data);
 					$("#group-channel-container").empty();
 					fillFollowGroupChannelList(data);
 				},

@@ -12,6 +12,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Insert title here</title>
 
+<meta property="og:title" content="DEVS GROUP">
+<meta property="og:description" content="개발자들을 위한 공간">
+
 <!-- START :: CSS -->
 <link rel="icon" type="image/png" href="/resources/images/icons/favicon.ico"/>
 <link rel="stylesheet" type="text/css" href="/resources/vendor/bootstrap/css/bootstrap.min.css">

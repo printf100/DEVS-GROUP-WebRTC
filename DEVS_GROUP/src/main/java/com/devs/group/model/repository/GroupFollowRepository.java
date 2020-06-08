@@ -15,4 +15,7 @@ public interface GroupFollowRepository extends CrudRepository<GroupFollow, Strin
 	public GroupFollow findByChannelcodeAndMembercode(int channelcode, int membercode);
 
 	public List<GroupFollow> findByChannelcodeAndFollowerrole(int channelcode, String followerrole);
+
+	public void deleteByMembercodeAndChannelcode(int membercode, int channelcode);
+	
 }

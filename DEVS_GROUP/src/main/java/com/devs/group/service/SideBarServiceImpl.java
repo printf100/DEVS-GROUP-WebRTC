@@ -148,4 +148,9 @@ public class SideBarServiceImpl implements SideBarService {
 		groupFollowRepository.save(groupFollow);
 	}
 
+	@Override
+	public void deleteGroupFollow(int membercode, int channelcode) {
+		groupFollowRepository.deleteByMembercodeAndChannelcode(membercode, channelcode);
+	}
+
 }

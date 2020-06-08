@@ -3,11 +3,9 @@ package com.devs.group.web;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
 
@@ -34,7 +32,9 @@ import com.devs.group.common.ssohandler.domain.entity.MemberProfile;
 import com.devs.group.common.ssohandler.service.MemberService;
 import com.devs.group.model.entity.GroupChannel;
 import com.devs.group.model.entity.GroupChannelBoard;
+import com.devs.group.model.entity.GroupFollow;
 import com.devs.group.model.repository.GroupChannelBoardRepository;
+import com.devs.group.model.repository.GroupFollowRepository;
 import com.devs.group.model.vo.MemberJoinProfileSimpleVo;
 import com.devs.group.service.GroupChannelService;
 import com.devs.group.service.SideBarService;
@@ -56,6 +56,9 @@ public class GroupController {
 
 	@Autowired
 	private GroupChannelBoardRepository groupChannelBoardRepository;
+
+	@Autowired
+	private GroupFollowRepository groupFollowRepository;
 
 	@Value("${server.port}")
 	private int SERVER_PORT;
@@ -104,6 +107,9 @@ public class GroupController {
 
 			System.out.println("------------세션도 있고 token도 null이 아니에요~~~~~~");
 			map.put("user", dbMember);
+
+			session.removeAttribute("channel");
+			session.removeAttribute("follow");
 
 			// 프로필 정보 session에 셋팅
 			session.setAttribute("profile", memberService.getMemberProfile(dbMember.getMembercode()));
@@ -390,4 +396,49 @@ public class GroupController {
 
 		return resultMap;
 	}
+
+	// 그룹 채널 팔로우 하기
+	@PostMapping("followGroupChannel")
+	public Map<String, Boolean> followGroupChannel(@RequestBody Map<String, Integer> map, HttpSession session) {
+
+		int membercode = map.get("membercode");
+		int channelcode = map.get("channelcode");
+
+		GroupFollow oldFollowMember = groupFollowRepository.findByChannelcodeAndMembercode(channelcode, membercode);
+
+		oldFollowMember.setChannelcode(channelcode);
+		oldFollowMember.setMembercode(membercode);
+		oldFollowMember.setFollowerrole("E");
+
+		GroupFollow changedFollowMember = groupFollowRepository.save(oldFollowMember);
+
+		System.out.println(changedFollowMember);
+
+		Map<String, Boolean> resultMap = new HashMap<String, Boolean>();
+		resultMap.put("res", true);
+
+		session.setAttribute("follow",
+				sideBarService.selectGroupFollow(channelcode, ((Member) session.getAttribute("user")).getMembercode()));
+
+		return resultMap;
+	}
+
+	// 그룹 채널 팔로우 취소하기
+//	@PostMapping("unfollowGroupChannel")
+//	public Map<String, Boolean> unfollowGroupChannel(@RequestBody Map<String, Integer> map, HttpSession session) {
+//
+//		int membercode = map.get("membercode");
+//		int channelcode = map.get("channelcode");
+//
+////		groupFollowRepository.deleteByMembercodeAndChannelcode(membercode, channelcode);
+//
+//		sideBarService.deleteGroupFollow(membercode, channelcode);
+//		Map<String, Boolean> resultMap = new HashMap<String, Boolean>();
+//		resultMap.put("res", true);
+//
+//		session.setAttribute("follow",
+//				sideBarService.selectGroupFollow(channelcode, ((Member) session.getAttribute("user")).getMembercode()));
+//
+//		return resultMap;
+//	}
 }
